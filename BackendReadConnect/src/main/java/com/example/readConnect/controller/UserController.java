@@ -59,8 +59,8 @@ public class UserController {
                 .orElseThrow(() -> new RuntimeException("User not found with id " + id));
 
         user.setUsername(userDetails.getUsername());
-        user.setPassword(userDetails.getPassword());
-        user.setEmail(userDetails.getEmail());
+//        user.setPassword(userDetails.getPassword());
+//        user.setEmail(userDetails.getEmail());
         user.setAge(userDetails.getAge());
         user.setCountry(userDetails.getCountry());
         user.setMode(userDetails.getMode());    

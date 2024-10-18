@@ -17,21 +17,23 @@
           <img src="images/editar.png" class="edit" @click="editPreferences" />
         </div>
         <div v-if="showForm" class="container-profile">
-          <form>
-            <input type="text" id="country" v-model="profile_settings.country" placeholder="Country">
-            <input type="text" id="email" v-model="profile_settings.email" placeholder="Email">
+          <form @submit.prevent="savePreferences">
+            <input type="text" id="username" v-model="profile_settings.username" placeholder="Username">
+            <!-- <input type="text" id="email" v-model="profile_settings.email" placeholder="Email"> -->
             <input type="text" id="phone" v-model="profile_settings.phone" placeholder="Phone">
             <input type="text" id="age" v-model="profile_settings.age" placeholder="Age">
+            <input type="text" id="country" v-model="profile_settings.country" placeholder="Country">
             <input type="text" id="mode" v-model="profile_settings.mode" placeholder="true">
             <button type="submit" @click="savePreferences">Save</button>
             <button type="submit" @click="hideForm">Cancel</button>
           </form>
         </div>
         <div v-else>
-          <p><strong>Country:</strong> {{ user.country }}</p>
-          <p><strong>Email:</strong> {{ user.email }}</p>
+          <p><strong>Username:</strong> {{ user.username }}</p>
+          <!-- <p><strong>Email:</strong> {{ user.email }}</p> -->
           <p><strong>Phone:</strong> {{ user.phone }}</p>
           <p><strong>Age:</strong> {{ user.age }}</p>
+          <p><strong>Country:</strong> {{ user.country }}</p>
           <p><strong>Profile Mode:</strong> {{ user.mode }}</p>
         </div>
       </div>
@@ -120,12 +122,7 @@ export default {
       user: {
         username: "",
         email: "",
-        //   fullName: "",
-        //   password: "",
-        //   country: "",
-        //   age: 0,
-        //   mode: false,
-        //   intrests: "",
+
       },
       profile_settings: {
         username: "",
@@ -133,7 +130,7 @@ export default {
         password: "",
         phone: "",
         email: "",
-        age: 0,
+        age: "",
         mode: false,
       },
       showForm: false,
@@ -148,7 +145,7 @@ export default {
       errorMessage: "",
       errorMessage2: "",
       rating: "Rating not available",
-     }
+    }
 
   },
 
@@ -177,48 +174,38 @@ export default {
     },
     hideform() {
       this.showForm = false;
-    },
+    },    
     savePreferences(event) {
-      event.preventDefault()
-      let id = localStorage.getItem('userId')
-
-      if (this.profile_settings.country.trim() === '') {
-        this.profile_settings.country = this.user.country
-      }
-      if (this.profile_settings.phone.trim() === '') {
-        this.profile_settings.phone = this.user.phone
-      }
-      if (this.profile_settings.email.trim() === '') {
-        this.profile_settings.email = this.user.email
-      }
-
-      let updateData = {
-        username: this.user.username,
-        country: this.user.country,
-        phone: this.user.phone,
-        email: this.user.email,
-        age: this.user.age,
-        mode: this.user.mode
+      event.preventDefault();
+      const updatedProfile = {
+        username: this.profile_settings.username || this.user.username,
+        country: this.profile_settings.country || this.user.country,
+        phone: this.profile_settings.phone || this.user.phone,
+        age: this.profile_settings.age || this.user.age,
+        mode: this.profile_settings.mode || this.user.mode,
       };
-      console.log(updateData)
-      FetchDataServices.updateUser(id, updateData)
+
+      FetchDataServices.updateUser(this.user.id, updatedProfile)
         .then(response => {
-          console.log(response.data)
+          this.user = { ...this.user, ...updatedProfile };
           this.showForm = false;
-          this.user.phone = updateData.phone;
-          this.user.email = updateData.email;
-          this.user.country = updateData.country;
-          this.user.age = updateData.age;
-          this.user.mode = updateData.mode;
-          this.profile_settings.country = "";
-          this.profile_settings.phone = "";
-          this.profile_settings.email = "";
-          this.profile_settings.age = "";
-          this.profile_settings.mode = "";
+          this.clearProfileForm();
+          console.log(response)
         })
         .catch(error => {
           console.error(error);
-        })
+        });
+    },
+
+    clearProfileForm() {
+      this.profile_settings = {
+        username: "",
+        country: "",
+        phone: "",
+        email: "",
+        age: "",
+        mode: false,
+      };
     },
 
     //cheking to make sure user is logged in
@@ -313,11 +300,11 @@ export default {
   width: 95%;
   margin: auto;
   display: flex;
+  font-size: 1rem;
 }
 
 .input-search {
   margin: auto;
-
   text-align: left;
   margin-bottom: 25px;
 }
@@ -371,7 +358,6 @@ input {
 
 .desc-book {
   margin-left: 30px;
-  font-size: 18px;
 }
 
 .cards {
@@ -383,14 +369,12 @@ input {
   background-color: rgb(230, 239, 247);
   border-radius: 0.5rem;
   padding: 5px;
-  font-size: 18px;
   margin-top: 15px;
 }
 
 .data-description {
   margin-bottom: 15px;
   padding: 2px;
-  font-size: 20px;
 }
 
 .setting {
@@ -400,7 +384,6 @@ input {
   border-radius: 0.5rem;
   margin-top: 15px;
   padding: 5px;
-  font-size: 20px;
   text-align: left;
 }
 
@@ -412,15 +395,12 @@ input {
 .fetchData {
   margin-left: 30px;
   margin-bottom: 40px;
-  font-size: 18px;
   background-color: transparent;
   border: none;
   color: rgb(60, 172, 15);
   cursor: pointer;
-  font-size: inherit;
   padding: 0;
   font-weight: bold;
-  font-size: 25px;
 }
 
 .edit {
@@ -446,7 +426,6 @@ h2 {
 }
 
 .desc-books1 {
-  font-size: 20px;
   text-align: right;
   margin-right: 15px;
   color: rgb(85, 80, 76)
@@ -459,15 +438,12 @@ h2 {
 .apply-btn {
   margin-left: 30px;
   margin-bottom: 20px;
-  font-size: 18px;
   background-color: transparent;
   border: none;
   color: rgb(214, 132, 65);
   cursor: pointer;
-  font-size: inherit;
   padding: 0;
   font-weight: bold;
-  font-size: 20px;
   margin-right: 15px;
 }
 
@@ -475,7 +451,6 @@ h2 {
   background-color: #dde6ee;
   height: 450px;
   border-radius: 0.5rem;
-  font-size: 20px;
   margin: auto;
   margin-top: 10px;
 
@@ -537,7 +512,6 @@ textarea {
 
 
 label {
-
   display: inline-block;
   color: black;
   text-align: left;
@@ -556,6 +530,5 @@ label {
 
 .error-message {
   color: white;
-  font-size: 16px;
 }
 </style>
