@@ -89,7 +89,9 @@ export default {
       FetchDataServices.getUserById(id)
         .then((response) => {
           this.user = response.data;
-          console.log(this.user.intrests[0].name);
+          // console.log(this.user.intrests[0].name);
+          console.log(this.user);
+
           this.intrest = this.user.intrests[0].name;
           this.fetchByTopic(this.intrest);
         })
@@ -158,11 +160,12 @@ export default {
   },
 
   mounted() {
-    this.retrieveUser();
     let newLogin = localStorage.getItem('newLogin');
+    this.retrieveUser();
+
     if (newLogin === 'true') {
       localStorage.setItem('newLogin', false);
-      this.checklogin();
+      // this.checklogin();
     } else {
       this.fetchByTopic("general");
     }
