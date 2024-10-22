@@ -27,18 +27,28 @@ public class ReadConnectApplication {
     ApplicationRunner init(UserRepository userRepository, BookRepository bookRepository, IntrestRepository intrestRepository,
                         PasswordEncoder passwordEncoder) {
         return args -> {
-            // Create and save Users
-            List<User> users = IntStream.rangeClosed(1, 5)
-                    .mapToObj(i -> new User("user" + i, passwordEncoder.encode("pass" + i), "user" + i + "@example.com", "Country" + i,  i, false, new HashSet<>()))
-                    .map(userRepository::save)
-                    .peek(user -> {
-//                        Intrest intrest = new Intrest("Intrest for " + user.getUsername(), user);
-                        Intrest intrest = new Intrest("general");
-                        intrestRepository.save(intrest);
-                        user.getIntrests().add(intrest);
-                        userRepository.save(user); // Update user with the new skill
-                    })
-                    .collect(Collectors.toList());
+        	
+
+        	String[] category = {"General","Psychology", "Science", "Historical","Literature"};
+        	// Create and save Users
+        	  List<User> users = IntStream.rangeClosed(1, 5)
+                      .mapToObj(i -> new User("user" + i, passwordEncoder.encode("pass" + i), "user" + i + "@example.com", "Country" + i,  i, false, category[i-1]))
+                      .map(userRepository::save)
+                      .collect(Collectors.toList());
+        	  
+        	
+        	  
+//            List<User> users = IntStream.rangeClosed(1, 5)
+//                    .mapToObj(i -> new User("user" + i, passwordEncoder.encode("pass" + i), "user" + i + "@example.com", "Country" + i,  i, false, new HashSet<>()))
+//                    .map(userRepository::save)
+//                    .peek(user -> {
+////                        Intrest intrest = new Intrest("Intrest for " + user.getUsername(), user);
+//                        Intrest intrest = new Intrest("general");
+//                        intrestRepository.save(intrest);
+//                        user.getIntrests().add(intrest);
+//                        userRepository.save(user); // Update user with the new skill
+//                    })
+//                    .collect(Collectors.toList());
             
             Random random = new Random();
 
@@ -46,13 +56,23 @@ public class ReadConnectApplication {
          // Create and save Books
             IntStream.rangeClosed(1, 5).forEach(i -> {
                 Book book = new Book(users.get(i - 1), 
-                                     new HashSet<>(), 
+                					 category[i-1], 
                                      ("Title" + i), 
                                      "Author" + i, 
                                      "ISBN" + i, 
                                      null); // assuming no image for now
                 bookRepository.save(book);
-            });           
+            }); 
+            
+//            IntStream.rangeClosed(1, 5).forEach(i -> {
+//                Book book = new Book(users.get(i - 1), 
+//                                     new HashSet<>(), 
+//                                     ("Title" + i), 
+//                                     "Author" + i, 
+//                                     "ISBN" + i, 
+//                                     null); // assuming no image for now
+//                bookRepository.save(book);
+//            });           
         
         };
     }

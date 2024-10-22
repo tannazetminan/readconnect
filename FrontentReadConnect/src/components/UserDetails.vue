@@ -23,7 +23,8 @@
             <input type="text" id="phone" v-model="profile_settings.phone" placeholder="Phone">
             <input type="text" id="age" v-model="profile_settings.age" placeholder="Age">
             <input type="text" id="country" v-model="profile_settings.country" placeholder="Country">
-            <input type="text" id="mode" v-model="profile_settings.mode" placeholder="true">
+            <input type="text" id="intrests" v-model="profile_settings.intrests" placeholder="psychology">
+            <input type="text" id="mode" v-model="profile_settings.mode" placeholder="false">
             <button type="submit" @click="savePreferences">Save</button>
             <button type="submit" @click="hideForm">Cancel</button>
           </form>
@@ -34,7 +35,8 @@
           <p><strong>Phone:</strong> {{ user.phone }}</p>
           <p><strong>Age:</strong> {{ user.age }}</p>
           <p><strong>Country:</strong> {{ user.country }}</p>
-          <p><strong>Profile Mode:</strong> {{ user.mode }}</p>
+          <p><strong>Interest:</strong> {{ user.intrests }}</p>
+          <p><strong>Profile Mode:</strong> <span v-if="user.mode== false">Visible</span><span v-else>Hidden</span></p>
         </div>
       </div>
 
@@ -131,6 +133,7 @@ export default {
         phone: "",
         email: "",
         age: "",
+        intrests: "",
         mode: false,
       },
       showForm: false,
@@ -182,6 +185,7 @@ export default {
         country: this.profile_settings.country || this.user.country,
         phone: this.profile_settings.phone || this.user.phone,
         age: this.profile_settings.age || this.user.age,
+        intrests: this.profile_settings.intrests || this.user.intrests,
         mode: this.profile_settings.mode || this.user.mode,
       };
 

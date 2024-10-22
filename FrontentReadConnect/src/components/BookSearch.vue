@@ -89,10 +89,8 @@ export default {
       FetchDataServices.getUserById(id)
         .then((response) => {
           this.user = response.data;
-          // console.log(this.user.intrests[0].name);
           console.log(this.user);
-
-          this.intrest = this.user.intrests[0].name;
+          this.intrest = this.user.intrests;
           this.fetchByTopic(this.intrest);
         })
         .catch((error) => {

@@ -11,6 +11,10 @@ public interface BookRepository extends JpaRepository<Book, Long> {
 //    List<Book> findByUserIdAndIsCompletedTrue(Long userId);
     List<Book> findByWriterId(Long writertId);
     
-    @Query("SELECT j FROM Book j JOIN j.intrests i WHERE i.name = :intrest")
+    
+    @Query("SELECT j FROM Book j WHERE category = :intrest")
     List<Book> findBooksByIntrestName(@Param("intrest") String intrest);
+    
+//    @Query("SELECT j FROM Book j JOIN j.intrests i WHERE i.name = :intrest")
+//    List<Book> findBooksByIntrestName(@Param("intrest") String intrest);
 }

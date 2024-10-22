@@ -63,7 +63,9 @@ public class UserController {
 //        user.setEmail(userDetails.getEmail());
         user.setAge(userDetails.getAge());
         user.setCountry(userDetails.getCountry());
-        user.setMode(userDetails.getMode());    
+        user.setMode(userDetails.getMode());
+        user.setIntrests(userDetails.getIntrests());
+        user.setPhone(userDetails.getPhone());
         final User updatedUser = userRepository.save(user);
         return ResponseEntity.ok(updatedUser);
     }

@@ -29,12 +29,10 @@ public class Book {
 	@JsonManagedReference
     private User writer;
 	
-    @OneToMany(mappedBy = "book", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    private Set<Intrest> intrests = new HashSet<>();
+//    @OneToMany(mappedBy = "book", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+//    private Set<Intrest> intrests = new HashSet<>();
     
-    @Lob
-    private byte[] image;
-	
+    private String category;
     private String title;
     private String author;
     private String isbn;
@@ -43,24 +41,37 @@ public class Book {
     private int totalRatings;
     private int soldNum;
     
+    @Lob
+    private byte[] image;
+    
     
     // Constructors
     public Book() {	}
-    
-	public Book(User writer, Set<Intrest> intrests,  String title, String author, String isbn, byte[] image) {
+
+    public Book(User writer, String category, String title, String author, String isbn, byte[] image) {
+		super();
 		this.writer = writer;
-		this.intrests = intrests;
 		this.image = image;
 		this.title = title;
 		this.author = author;
 		this.isbn = isbn;
+		this.category = category;
 	}
-
-
-	public Book(User writer, Set<Intrest> intrests, byte[] image, String title, String author, String isbn,
-			String location, double averageRating, int totalRatings, int soldNum) {
+    public Book(User writer, String category, String title, String author, String isbn, String location,
+			  byte[] image) {
+		super();
 		this.writer = writer;
-		this.intrests = intrests;
+		this.image = image;
+		this.title = title;
+		this.author = author;
+		this.isbn = isbn;
+		this.location = location;
+		this.category = category;
+	}
+    public Book(User writer, String category, String title, String author, String isbn, String location,
+			double averageRating, int totalRatings, int soldNum,  byte[] image) {
+		super();
+		this.writer = writer;
 		this.image = image;
 		this.title = title;
 		this.author = author;
@@ -69,7 +80,32 @@ public class Book {
 		this.averageRating = averageRating;
 		this.totalRatings = totalRatings;
 		this.soldNum = soldNum;
-	}    
+		this.category = category;
+	}
+
+//	public Book(User writer, Set<Intrest> intrests,  String title, String author, String isbn, byte[] image) {
+//		this.writer = writer;
+//		this.intrests = intrests;
+//		this.image = image;
+//		this.title = title;
+//		this.author = author;
+//		this.isbn = isbn;
+//	}
+//
+//
+//	public Book(User writer, Set<Intrest> intrests, byte[] image, String title, String author, String isbn,
+//			String location, double averageRating, int totalRatings, int soldNum) {
+//		this.writer = writer;
+//		this.intrests = intrests;
+//		this.image = image;
+//		this.title = title;
+//		this.author = author;
+//		this.isbn = isbn;
+//		this.location = location;
+//		this.averageRating = averageRating;
+//		this.totalRatings = totalRatings;
+//		this.soldNum = soldNum;
+//	}    
     
 
 	// Getters and Setters
@@ -85,12 +121,7 @@ public class Book {
 	public void setWriter(User writer) {
 		this.writer = writer;
 	}
-	public Set<Intrest> getIntrests() {
-		return intrests;
-	}
-	public void setIntrests(Set<Intrest> intrests) {
-		this.intrests = intrests;
-	}
+
 	public byte[] getImage() {
 		return image;
 	}
@@ -139,5 +170,19 @@ public class Book {
 	public void setSoldNum(int soldNum) {
 		this.soldNum = soldNum;
 	}
+	public String getCategory() {
+		return category;
+	}
+	public void setCategory(String category) {
+		this.category = category;
+	}
+	
+
+//	public Set<Intrest> getIntrests() {
+//		return intrests;
+//	}
+//	public void setIntrests(Set<Intrest> intrests) {
+//		this.intrests = intrests;
+//	}
 	
 }

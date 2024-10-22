@@ -46,7 +46,9 @@
         </div>
         <div class="form-row">
           <label for="interests">Interests:</label>
-          <select id="interests" v-model="tempIntrest" required>
+          <select id="interests" v-model="user.intrests" required>
+            <!-- <select id="interests" v-model="tempIntrest" required> -->
+
             <option value="" disabled>Select interests</option>
             <option value="Psychology">Psychology</option>
             <option value="General" selected>General</option>
@@ -91,7 +93,7 @@ export default {
         country: "",
         age: 18,
         mode: false,
-        intrests: []
+        intrests: "",
       },
       tempIntrest: "",
       successMessage: null,
@@ -117,6 +119,8 @@ export default {
     addIntrests() {
       if (this.tempIntrest && !this.user.intrests.includes(this.tempIntrest)) {
         this.user.intrests.push(this.tempIntrest);
+        // this.user.intrest.push(this.tempIntrest);
+
       }
       this.tempIntrest = "";
     },
@@ -143,7 +147,7 @@ export default {
       this.user.password = hashedPassword;
 
       //updating the intrest table
-      this.addIntrests();
+      // this.addIntrests();
 
       FetchDataService.createUser(this.user)
         .then(response => {

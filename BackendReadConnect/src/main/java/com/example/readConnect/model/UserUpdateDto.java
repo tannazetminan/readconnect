@@ -7,7 +7,9 @@ public class UserUpdateDto {
     private String country;
     private int age;
     private boolean mode;
-    
+    private String intrests;
+    private String phone;
+
     
 	public String getUsername() {
 		return username;
@@ -42,7 +44,21 @@ public class UserUpdateDto {
 	public boolean getMode() {
 		return mode;
 	}
-	public void setHidden(boolean mode) {
+	public void setMode(boolean mode) {
 		this.mode = mode;
 	} 
+	public String getIntrests() {
+		return intrests;
+	}
+
+	public void setIntrests(String intrests) {
+		this.intrests = intrests;
+	} 
+	public String getPhone() {
+		return phone;
+	}
+	public void setPhone(String phone) {
+		this.phone = phone;
+	} 
+	
 }

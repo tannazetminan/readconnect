@@ -11,6 +11,8 @@ public class BookCreateDto {
     private String isbn;
     private String location;  
     private int soldNum;
+    private String category;
+
     
     //getters and setters
 	public byte[] getImage() {
@@ -49,4 +51,10 @@ public class BookCreateDto {
 	public void setSoldNum(int soldNum) {
 		this.soldNum = soldNum;
 	}    
+	public String getCategory() {
+		return category;
+	}
+	public void setCategory(String category) {
+		this.category = category;
+	}
 }
