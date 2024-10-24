@@ -14,7 +14,7 @@
             <router-link to="/booksearch" class="nav-link">Search</router-link>
           </li>
           <li>
-            <router-link to="/workers" class="nav-link">Books</router-link>
+            <router-link to="/books" class="nav-link">Books</router-link>
           </li>
           <li v-if="isLoggedIn && userType === 'user'">
             <router-link to="/userdetails" class="nav-link">Profile</router-link>
@@ -58,7 +58,7 @@ export default {
     },
     chekUserType() {
       this.userType = localStorage.getItem('userType');
-      console.log("user type" + this.userType)
+      // console.log("user type" + this.userType)
     }
   },
 

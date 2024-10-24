@@ -56,6 +56,7 @@ public class ReadConnectApplication {
          // Create and save Books
             IntStream.rangeClosed(1, 5).forEach(i -> {
                 Book book = new Book(users.get(i - 1), 
+                		 			 "<p>lorem</p>",
                 					 category[i-1], 
                                      ("Title" + i), 
                                      "Author" + i, 

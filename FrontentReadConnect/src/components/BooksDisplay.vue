@@ -13,12 +13,14 @@
     </div>
     <div class="cards">
       <div v-for="book in books" :key="book.id" class="card-book">
-        <img src="images/book.jpg" class="profile" />
-        <p><strong>id:</strong> {{ book.id }}</p>
-
-        <p style="font-size: large;">{{ book.title }}</p>
-        <p style="font-weight: normal;">{{ book.author }}</p>
-        <p>{{ book.isbn }}</p>
+        <p>
+          <img v-if="book.image" :src="getImageSrc(book.image)" alt="Book Image" class="profile" />
+          <img v-else src="../../public/images/book.jpg" alt="Book Image" class="profile" />
+        </p>
+        <p>Title: <span style="font-size: large;">{{ book.title }}</span></p>
+        <p>Author: <span style="font-weight: bold;">{{ book.author }}</span></p>
+        <p>Post Creator: {{ book.writer.username }}</p>
+        <p>ISBN: {{ book.isbn }}</p>
         <!-- <p style="text-align: left; margin-left: 10px;">
           <img src="../../public/images/phone.png" width="25px" height="25px" style="margin-bottom: -7px;" /> {{
             book.phone }}<br /><br />
@@ -57,7 +59,7 @@
 import FetchDataService from "../services/FetchDataService";
 
 export default {
-  name: "DisplayBooks",
+  name: "BooksDisplay",
 
   data() {
     return {
@@ -82,12 +84,14 @@ export default {
           }
         });
     },
+    getImageSrc(image) {
+      return `data:image/jpg;base64,${image}`;
+    },
+    sendData(bookId){         
+        console.log("book id", bookId)
+        this.$router.push({name:"BookDetails", params: { bookId: bookId }})
 
-    // sendData(bookId){         
-    //     console.log("mira lo que tengo aca", workerId)
-    //     this.$router.push({name:"SelectedWorker", params: { workerId: workerId }})
-
-    // }
+    }
   },
   mounted() {
     this.fetchBooks();
@@ -184,8 +188,10 @@ h1 {
   border: none;
   border-radius: 4px;
   cursor: pointer;
-
   margin: auto;
   margin-bottom: 10px;
+}
+p{
+  font-weight: normal;
 }
 </style>

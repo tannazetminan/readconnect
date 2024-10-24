@@ -12,6 +12,7 @@ public class BookCreateDto {
     private String location;  
     private int soldNum;
     private String category;
+    private String description;
 
     
     //getters and setters
@@ -56,5 +57,11 @@ public class BookCreateDto {
 	}
 	public void setCategory(String category) {
 		this.category = category;
+	}
+	public String getDescription() {
+		return description;
+	}
+	public void setDescription(String description) {
+		this.description = description;
 	}
 }

@@ -2,10 +2,10 @@ import { createWebHistory, createRouter } from "vue-router";
 import HomePage from "../components/HomePage.vue";
 import SignIn from "../components/SignIn.vue";
 import SingUp from "../components/SignUp.vue";
-import BookSearch from "../components/BookSearch.vue"
-import DisplayBooks from "../components/DisplayBooks.vue";
 import UserDetails from "../components/UserDetails.vue";
-
+import BookSearch from "../components/BookSearch.vue"
+import BooksDisplay from "../components/BooksDisplay.vue";
+import BookDetails from "@/components/BookDetails.vue";
 
 
 const routes = [
@@ -25,19 +25,24 @@ const routes = [
     path: "/signup"
   },
   {
-    name: "BookSearch",
-    component: BookSearch,
-    path: "/bookSearch"
-  },
-  {
     name: "userDetails",
     component: UserDetails,
     path: "/userdetails"
   },
   {
-    name: "Displaybooks",
-    component: DisplayBooks,
-    path: "/workers"
+    name: "BookSearch",
+    component: BookSearch,
+    path: "/bookSearch"
+  },
+  {
+    name: "BooksDisplay",
+    component: BooksDisplay,
+    path: "/books"
+  }, 
+  {
+    name: "BookDetails",
+    component: BookDetails,
+    path: '/books/:bookId',
   }, 
 ];
 

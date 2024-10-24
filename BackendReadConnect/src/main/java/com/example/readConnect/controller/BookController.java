@@ -40,16 +40,27 @@ public class BookController {
         }
     }
 
-    
+
+
+    // get a single book by ID
+    @GetMapping("/{id}")
+    public ResponseEntity<Book> getBookById(@PathVariable Long id) {
+        return bookRepository.findById(id)
+                .map(worker -> new ResponseEntity<>(worker, HttpStatus.OK))
+                .orElseGet(() -> new ResponseEntity<>(HttpStatus.NOT_FOUND));
+    }
+ 
     
     @PostMapping("/create")
     public ResponseEntity<Book> createBook(
             @RequestParam Long writerId, 
-            @RequestParam("image") MultipartFile image, // Accept image file
+            @RequestParam("image") MultipartFile image, 
             @RequestParam String title,
             @RequestParam String author,
             @RequestParam String isbn,
-            @RequestParam String location) {
+            @RequestParam String location,
+            @RequestParam String category,
+            @RequestParam String description) {
         try {
             Book bookDetails = new Book();
             // Convert MultipartFile to byte array
@@ -58,6 +69,9 @@ public class BookController {
             bookDetails.setAuthor(author);
             bookDetails.setIsbn(isbn);
             bookDetails.setLocation(location);
+            bookDetails.setCategory(category);
+            bookDetails.setDescription(description);
+
             
             // Set interests later
             // Assuming intrests is a List<String> (or Set)

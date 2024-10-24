@@ -32,7 +32,8 @@ public class Book {
 //    @OneToMany(mappedBy = "book", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
 //    private Set<Intrest> intrests = new HashSet<>();
     
-    private String category;
+    private String description;
+	private String category;
     private String title;
     private String author;
     private String isbn;
@@ -48,8 +49,9 @@ public class Book {
     // Constructors
     public Book() {	}
 
-    public Book(User writer, String category, String title, String author, String isbn, byte[] image) {
+    public Book(User writer, String description, String category, String title, String author, String isbn, byte[] image) {
 		super();
+		this.description = description;
 		this.writer = writer;
 		this.image = image;
 		this.title = title;
@@ -57,9 +59,10 @@ public class Book {
 		this.isbn = isbn;
 		this.category = category;
 	}
-    public Book(User writer, String category, String title, String author, String isbn, String location,
+    public Book(User writer,  String description, String category, String title, String author, String isbn, String location,
 			  byte[] image) {
 		super();
+		this.description = description;
 		this.writer = writer;
 		this.image = image;
 		this.title = title;
@@ -175,6 +178,12 @@ public class Book {
 	}
 	public void setCategory(String category) {
 		this.category = category;
+	}
+	public String getDescription() {
+		return description;
+	}
+	public void setDescription(String description) {
+		this.description = description;
 	}
 	
 

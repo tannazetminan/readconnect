@@ -6,13 +6,13 @@ class FetchDataService {
         return http.post("/users", userData); 
     }
 
-    updateUser(sid, data){
-        return  http.put(`/users/${sid}`, data)
+    updateUser(id, data){
+        return  http.put(`/users/${id}`, data)
     }
 
     
-    getUserById(sid){
-        return http.get(`/users/${sid}`)
+    getUserById(id){
+        return http.get(`/users/${id}`)
     }
     
     postNewBook(writerId, data) {
@@ -31,8 +31,11 @@ class FetchDataService {
     }
 
     getAllBooks(){
-        return http.get(`/books`)
+        return http.get(`/books`);
+    }
 
+    getBookById(id){
+        return http.get(`/books/${id}`);
     }
     
 }

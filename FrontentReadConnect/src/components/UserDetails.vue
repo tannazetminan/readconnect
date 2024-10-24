@@ -48,7 +48,7 @@
         </div>
         <form @submit.prevent="handleSubmit">
           <div class="container-lbl">
-            <select v-model="newBook.intrests" required placeholder="Category">
+            <select v-model="newBook.category" required placeholder="Category">
               <option value="" disabled>Select Category</option>
               <option value="Psychology">Psychology</option>
               <option value="General">General</option>
@@ -64,10 +64,13 @@
             <input type="text" v-model="newBook.author" required placeholder="Author" />
           </div>
           <div class="container-lbl">
+            <input type="text" v-model="newBook.description" required placeholder="Description" />
+          </div>
+          <div class="container-lbl">
             <input type="text" v-model="newBook.isbn" required placeholder="ISBN" />
           </div>
           <div class="container-lbl">
-            <input type="text" v-model="newBook.location" required placeholder="Location" />
+            <input type="text" v-model="newBook.location" placeholder="Location" />
           </div>
           <div class="container-lbl">
             <input type="file" @change="onFileChange" accept="image/*" />
@@ -87,7 +90,8 @@
         <div style="display: block; float: left;">
           <p class="desc-book"><span style="font-weight: bold;">Title: </span>{{ book.title }} </p>
           <p class="desc-book">Author: {{ book.author }} </p>
-          <p class="desc-book">category: {{ book.intrests.name }} </p>
+          <p class="desc-book">category: {{ book.category }} </p>
+          <p class="desc-book">Description: {{ book.description }}</p>
           <p class="desc-book">ISBN: {{ book.isbn }}</p>
           <p class="desc-book">Location: {{ book.location }}</p>
         </div>
@@ -142,6 +146,7 @@ export default {
         author: '',
         isbn: '',
         location: '',
+        description: '',
         image: null,
       },
       books: [],
@@ -236,7 +241,9 @@ export default {
       formData.append('author', this.newBook.author);
       formData.append('isbn', this.newBook.isbn);
       formData.append('location', this.newBook.location);
-      formData.append('intrests', this.newBook.intrests);
+      formData.append('category', this.newBook.category);
+      formData.append('description', this.newBook.description);
+      
       if (this.newBook.image) {
         formData.append('image', this.newBook.image);
       }
@@ -422,7 +429,6 @@ h2 {
   text-align: center;
 }
 
-
 .bookImg {
   border-radius: 10px;
   width: 200px;
@@ -457,7 +463,6 @@ h2 {
   border-radius: 0.5rem;
   margin: auto;
   margin-top: 10px;
-
 }
 
 form {
