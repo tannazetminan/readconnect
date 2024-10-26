@@ -10,37 +10,38 @@
                     <img v-if="book.image" :src="getImageSrc(book.image)" alt="Book Image" class="profile" />
                     <img v-else src="../../public/images/book.jpg" alt="Book Image" class="profile" />
                 </p>
-                <p class=" data-description">{{ book.title }}</p>
+                <p class=" data-description"><strong>{{ book.title }}</strong></p>
             </div>
 
             <!-- book details-->
             <div class="setting">
                 <div class="edit-preferences">
-                    <h2>Book Details</h2>
+                    <h3>Book Details</h3>
                 </div>
                 <div>
-                    <p>Title: <span style="font-size: large;">{{ book.title }}</span></p>
-                    <p>Author: <span style="font-weight: bold;">{{ book.author }}</span></p>                    
-                    <p v-if="book.writer.mode== false"> Post Creator: 
+                    <p><span style="font-weight: bold;">Author: </span>{{ book.author }}</p>
+                    <p v-if="book.writer.mode == false">
+                        <span style="font-weight: bold;">Post Creator: </span>
                         <span @click="sendData(book.writer.id)" class="creator">{{ book.writer.username }}</span>
                     </p>
-                    <p v-else> <span>Post Creator: {{ book.writer.username }}</span> </p>
-                    <p>ISBN: {{ book.isbn }}</p>
+                    <p v-else> <span style="font-weight: bold;">Post Creator: </span>{{ book.writer.username }} </p>
+                    <p><span style="font-weight: bold;">ISBN: </span>{{ book.isbn }}</p>
+                    <p>
+                        <span style="font-weight: bold;">Description:<br/></span> 
+                        <span class="data-description">{{book.description }}</span> 
+                    </p>
                 </div>
 
             </div>
         </div>
 
-        <!-- book des & comments-->
+        <!-- book comments-->
         <div class="card-pf">
             <div class=" profile-desc">
 
+                <h3>Comments for this book:</h3>
+                no comment yet
 
-                <div class="desc">
-                    <h4>Description: </h4>
-
-                    <p class="data-description">{{ book.description }}</p>
-                </div>
                 <!-- <h3> Technical Skills</h3>
                 <ul>
                     <li v-for="(skill, index) in book.skills" :key="index">{{ skill.name }}</li>
@@ -104,8 +105,8 @@ export default {
         },
 
         //going to creator page
-        sendData(userId){         
-        this.$router.push({name:"UserDisplay", params: { userId: userId }})
+        sendData(userId) {
+            this.$router.push({ name: "UserDisplay", params: { userId: userId } })
         }
     },
 
@@ -119,7 +120,6 @@ export default {
         }
     }
 }
-
 
 
 </script>
@@ -139,27 +139,28 @@ export default {
     margin-top: 25px;
     height: 350px;
     width: 250px;
-
 }
 
-.creator{
+.creator {
     font-weight: bold;
-    cursor: alias;
-    color: brown;
+    cursor: cell;
+    color: white;
     animation: backwards;
+    background-color: #e27713;
+    padding: 6px 10px;
+    border-radius: 10%;
 }
 
 .cards-description {
     text-align: center;
-    width: 30%;
+    width: 35%;
     height: fit-content;
     align-items: flex-start;
     border-radius: 0.5rem;
-
 }
 
 .card-pf {
-    width: 70%;
+    width: 64%;
     text-align: left;
     margin-left: 100px;
 }
@@ -184,7 +185,6 @@ export default {
 .data-description {
     margin-bottom: 15px;
     padding: 2px;
-
 }
 
 .setting {
@@ -193,14 +193,13 @@ export default {
     background-color: rgb(230, 239, 247);
     border-radius: 0.5rem;
     margin-top: 15px;
-    padding: 5px;
+    padding: 20px;
     text-align: left;
-
+    font-size: 0.93rem;
 }
 
-h2 {
+h3 {
     margin-top: 15px;
-    font-size: 25px;
     text-align: center;
 }
 
@@ -211,7 +210,6 @@ h2 {
 
 .title-pr {
     text-align: left;
-
 }
 
 .desc {

@@ -11,7 +11,7 @@
       </div>
       <div class="container-form">
         <div class="ctn-title">
-          <h2 class=" title ">New message</h2>
+          <h3 class=" title ">New message</h3>
         </div>
 
         <!-- Message Form -->
@@ -60,7 +60,7 @@
 import FetchDataService from "../services/FetchDataService";
 
 export default {
-  name: "MessagesDisplay",
+  name: "MessageChat",
 
   data() {
     return {
@@ -444,7 +444,7 @@ textarea {
   border-radius: 4px;
   box-sizing: border-box;
   margin-left: 2rem;
-  border-color: #7de20a;
+  border-color: #233181;
   margin: auto;
   margin-top: 2px;
 }

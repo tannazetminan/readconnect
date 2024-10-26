@@ -57,6 +57,9 @@ class FetchDataService {
         return http.get(`/users/by-username?username=${username}`);
     }
     
+    getUserConversations(userId) {
+        return http.get(`/messages/conversations/${userId}`);
+    }
 }
 
 export default new FetchDataService();

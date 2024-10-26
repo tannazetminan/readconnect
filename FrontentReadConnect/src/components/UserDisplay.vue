@@ -14,7 +14,7 @@
       <!--edit profile section-->
       <div class="setting">
         <div class="edit-preferences">
-          <h2>Profile</h2>
+          <h3>Profile</h3>
         </div>
         <div>
           <p><strong>Username:</strong> {{ user.username }}</p>
@@ -139,7 +139,7 @@ export default {
 
     //going to message page carring reciverId
     sendData(receiverId) {
-      this.$router.push({ name: "MessagesDisplay", params: { receiverId: receiverId } })
+      this.$router.push({ name: "MessageChat", params: { receiverId: receiverId } })
     },
 
     setRating(bookId, rating) {
@@ -247,6 +247,7 @@ export default {
   margin-top: 15px;
   padding: 5px;
   text-align: left;
+  font-size: 0.93rem;
 }
 
 button {
@@ -262,7 +263,7 @@ button {
   margin-right: auto;
 }
 
-h2 {
+h3 {
   margin-top: 15px;
   width: 90%;
   text-align: center;

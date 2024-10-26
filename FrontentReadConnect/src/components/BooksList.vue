@@ -1,12 +1,12 @@
 <template>
   <div class="container-book">
-    <div class="categories">
+    <!-- <div class="categories">
       <span>General</span>
       <span>Science</span>
       <span>Electrical </span>
       <span>Historical</span>
       <span>Psychology </span>
-    </div>
+    </div> -->
 
     <div>
       <h1 class="title">List of Books</h1>
@@ -59,7 +59,7 @@
 import FetchDataService from "../services/FetchDataService";
 
 export default {
-  name: "BooksDisplay",
+  name: "BooksList",
 
   data() {
     return {

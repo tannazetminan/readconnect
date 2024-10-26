@@ -11,12 +11,7 @@ public class APIBookController {
 
     @Autowired
     private APIBookService bookService;
-
-//    @GetMapping("/search")
-//    public String searchBooks(@RequestParam String query) {
-//        return bookService.searchBooks(query);
-//    }
-//    
+  
     @GetMapping("/search")
     public String searchBooks(@RequestParam String query, 
                               @RequestParam(required = false) String author,

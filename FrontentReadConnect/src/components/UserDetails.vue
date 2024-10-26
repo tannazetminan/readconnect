@@ -258,7 +258,7 @@ export default {
     fetchBooks(id) {
       FetchDataServices.getBookByUserId(id)
         .then(response => {
-          this.books = response.data;
+          this.books = response.data.reverse();
         })
         .catch(error => {
           if (error.response) {

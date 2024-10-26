@@ -5,11 +5,11 @@ import SingUp from "../components/SignUp.vue";
 import UserDetails from "../components/UserDetails.vue";
 import UserDisplay from "@/components/UserDisplay.vue";
 import BookSearch from "../components/BookSearch.vue"
-import BooksDisplay from "../components/BooksDisplay.vue";
+import BooksList from "../components/BooksList.vue";
 import BookDetails from "@/components/BookDetails.vue";
-import MessagesDisplay from "@/components/MessagesDisplay.vue";
+import MessageChat from "@/components/MessageChat.vue";
 import MessagesList from "@/components/MessagesList.vue";
-import MessageDetails from "@/components/MessageDetails.vue";
+
 
 const routes = [
   {
@@ -43,9 +43,9 @@ const routes = [
     path: "/bookSearch"
   },
   {
-    name: "BooksDisplay",
-    component: BooksDisplay,
-    path: "/books"
+    name: "BooksList",
+    component: BooksList,
+    path: "/booksList"
   }, 
   {
     name: "BookDetails",
@@ -53,20 +53,17 @@ const routes = [
     path: '/books/:bookId',
   }, 
   {
-    name: "MessagesDisplay",
-    component: MessagesDisplay,
-    path: '/messagesDisplay/:receiverId',
+    name: "MessageChat",
+    component: MessageChat,
+    path: '/messageChat/:receiverId',
   }, 
   {
     name: "MessagesList",
     component: MessagesList,
     path: '/messagesList',
   }, 
-  {
-    name: "MessageDetails",
-    component: MessageDetails,
-    path: '/messageDetails',
-  }
+ 
+
 ];
 
 const router = createRouter({
