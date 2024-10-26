@@ -15,7 +15,7 @@
       <div v-for="book in books" :key="book.id" class="card-book">
         <p>
           <img v-if="book.image" :src="getImageSrc(book.image)" alt="Book Image" class="profile" />
-          <img v-else src="../../public/images/book.jpg" alt="Book Image" class="profile" />
+          <img v-else src="images/book.jpg" alt="Book Image" class="profile" />
         </p>
         <p>Title: <span style="font-size: large;">{{ book.title }}</span></p>
         <p>Author: <span style="font-weight: bold;">{{ book.author }}</span></p>
@@ -90,12 +90,10 @@ export default {
     sendData(bookId){         
         console.log("book id", bookId)
         this.$router.push({name:"BookDetails", params: { bookId: bookId }})
-
     }
   },
   mounted() {
     this.fetchBooks();
-
   },
 
 }

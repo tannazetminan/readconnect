@@ -99,6 +99,21 @@ public class UserController {
         return ResponseEntity.ok(response);
     }
     
+    
+    //for messaging
+    @GetMapping("/by-username")
+    public ResponseEntity<?> getUserIdByUsername(@RequestParam String username) {
+        User user = userRepository.findByUsername(username);
+        if (user != null) {
+            Map<String, Long> response = new HashMap<>();
+            response.put("id", user.getId());
+            return ResponseEntity.ok(response);
+        } else {
+            return new ResponseEntity<>("User not found", HttpStatus.NOT_FOUND);
+        }
+    }
+
+    
 //    // update an existing user
 //    @PutMapping("/{id}")
 //    public ResponseEntity<User> updateUser(@PathVariable Long id, @RequestBody UserUpdateDto userDetailsDto) {

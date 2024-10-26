@@ -1,9 +1,10 @@
 <template>
     <div v-if="book.title" class="container-cards">
 
-        <!-- showing the book img-->
+        <!-- book info-->
         <div class="cards-description">
 
+            <!-- book img & tile-->
             <div class="personal-data">
                 <p>
                     <img v-if="book.image" :src="getImageSrc(book.image)" alt="Book Image" class="profile" />
@@ -12,27 +13,32 @@
                 <p class=" data-description">{{ book.title }}</p>
             </div>
 
-
+            <!-- book details-->
             <div class="setting">
                 <div class="edit-preferences">
                     <h2>Book Details</h2>
                 </div>
                 <div>
                     <p>Title: <span style="font-size: large;">{{ book.title }}</span></p>
-                    <p>Author: <span style="font-weight: bold;">{{ book.author }}</span></p>
-                    <p>Post Creator: {{ book.writer.username }}</p>
+                    <p>Author: <span style="font-weight: bold;">{{ book.author }}</span></p>                    
+                    <p v-if="book.writer.mode== false"> Post Creator: 
+                        <span @click="sendData(book.writer.id)" class="creator">{{ book.writer.username }}</span>
+                    </p>
+                    <p v-else> <span>Post Creator: {{ book.writer.username }}</span> </p>
                     <p>ISBN: {{ book.isbn }}</p>
                 </div>
 
             </div>
         </div>
 
+        <!-- book des & comments-->
         <div class="card-pf">
             <div class=" profile-desc">
 
-                <h4>Description: </h4>
 
                 <div class="desc">
+                    <h4>Description: </h4>
+
                     <p class="data-description">{{ book.description }}</p>
                 </div>
                 <!-- <h3> Technical Skills</h3>
@@ -96,6 +102,11 @@ export default {
         getImageSrc(image) {
             return `data:image/jpg;base64,${image}`;
         },
+
+        //going to creator page
+        sendData(userId){         
+        this.$router.push({name:"UserDisplay", params: { userId: userId }})
+        }
     },
 
     mounted() {
@@ -129,6 +140,13 @@ export default {
     height: 350px;
     width: 250px;
 
+}
+
+.creator{
+    font-weight: bold;
+    cursor: alias;
+    color: brown;
+    animation: backwards;
 }
 
 .cards-description {
@@ -179,21 +197,6 @@ export default {
     text-align: left;
 
 }
-
-.fetchData {
-    margin-left: 30px;
-    margin-bottom: 40px;
-    font-size: 18px;
-    background-color: transparent;
-    border: none;
-    color: rgb(60, 172, 15);
-    cursor: pointer;
-    font-size: inherit;
-    padding: 0;
-    font-weight: bold;
-    font-size: 25px;
-}
-
 
 h2 {
     margin-top: 15px;

@@ -20,7 +20,7 @@
             <router-link to="/userdetails" class="nav-link">Profile</router-link>
           </li>
           <li v-if="isLoggedIn">
-            <router-link to="/messages" class="nav-link">Messages</router-link>
+            <router-link to="/messagesdisplay" class="nav-link">Messages</router-link>
           </li>
           <li v-if="!isLoggedIn">
             <router-link to="/login" class="nav-link">Login</router-link>

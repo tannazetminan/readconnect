@@ -36,10 +36,15 @@
           <p><strong>Age:</strong> {{ user.age }}</p>
           <p><strong>Country:</strong> {{ user.country }}</p>
           <p><strong>Interest:</strong> {{ user.intrests }}</p>
-          <p><strong>Profile Mode:</strong> <span v-if="user.mode== false">Visible</span><span v-else>Hidden</span></p>
+          <p><strong>Profile Mode:</strong> <span v-if="user.mode == false">Visible</span><span v-else>Hidden</span></p>
         </div>
       </div>
 
+    </div>
+
+
+    <!--showin books section-->
+    <div class="card-books">
 
       <!-- Post a New Book Section -->
       <div class="container-form">
@@ -48,7 +53,7 @@
         </div>
         <form @submit.prevent="handleSubmit">
           <div class="container-lbl">
-            <select v-model="newBook.category" required placeholder="Category">
+            <select v-model="newBook.category" required>
               <option value="" disabled>Select Category</option>
               <option value="Psychology">Psychology</option>
               <option value="General">General</option>
@@ -56,36 +61,20 @@
               <option value="Science">Science</option>
               <option value="Literature">Literature</option>
             </select>
-          </div>
-          <div class="container-lbl">
             <input type="text" v-model="newBook.title" required placeholder="Book Title" />
-          </div>
-          <div class="container-lbl">
             <input type="text" v-model="newBook.author" required placeholder="Author" />
-          </div>
-          <div class="container-lbl">
-            <input type="text" v-model="newBook.description" required placeholder="Description" />
-          </div>
-          <div class="container-lbl">
+            <input type="textArea" v-model="newBook.description" required placeholder="Description" />
             <input type="text" v-model="newBook.isbn" required placeholder="ISBN" />
-          </div>
-          <div class="container-lbl">
             <input type="text" v-model="newBook.location" placeholder="Location" />
-          </div>
-          <div class="container-lbl">
-            <input type="file" @change="onFileChange" accept="image/*" />
-          </div>
-          <div class="container-btn">
+            <input type="file" @change="onFileChange" accept="image/*" id="imgInput" >
             <button type="submit">Send</button>
             <p v-if="errorMessage" class="error-message">{{ errorMessage }}</p>
           </div>
         </form>
       </div>
-    </div>
 
 
-    <!--showin books section-->
-    <div class="card-books">
+      <!-- Show existing books-->
       <div v-for="book in books" :key="book.id" class="book">
         <div style="display: block; float: left;">
           <p class="desc-book"><span style="font-weight: bold;">Title: </span>{{ book.title }} </p>
@@ -97,7 +86,7 @@
         </div>
         <div style="display: block; float: right;">
           <img v-if="book.image" :src="getImageSrc(book.image)" alt="Book Image" class="bookImg" />
-          <img v-else src="../../public/images/book.jpg" alt="Book Image" class="bookImg" />
+          <img v-else src="images/book.jpg" alt="Book Image" class="bookImg" />
         </div>
         <p class="desc-book">
           <star-rating v-model:rating="book.rating" star-size="35" show-rating=False animate=true
@@ -182,7 +171,7 @@ export default {
     },
     hideform() {
       this.showForm = false;
-    },    
+    },
     savePreferences(event) {
       event.preventDefault();
       const updatedProfile = {
@@ -243,7 +232,7 @@ export default {
       formData.append('location', this.newBook.location);
       formData.append('category', this.newBook.category);
       formData.append('description', this.newBook.description);
-      
+
       if (this.newBook.image) {
         formData.append('image', this.newBook.image);
       }
@@ -314,23 +303,6 @@ export default {
   font-size: 1rem;
 }
 
-.input-search {
-  margin: auto;
-  text-align: left;
-  margin-bottom: 25px;
-}
-
-input {
-  width: 80%;
-  height: 30px;
-  border-radius: 0.8rem;
-  margin-left: 25px;
-  background-size: 20px;
-  background-repeat: no-repeat;
-  margin-top: 20px;
-
-}
-
 .profile {
   display: block;
   margin-top: 25px;
@@ -340,31 +312,28 @@ input {
 
 .cards-description {
   text-align: center;
-  width: 20%;
-  height: 850px;
+  width: 25%;
   align-items: flex-start;
   border-radius: 0.5rem;
 }
 
 .card-books {
-  width: 70%;
+  width: 69%;
   text-align: center;
-  margin-left: 100px;
+  margin-left: auto;
+  margin-right: auto;
   margin-top: 20px;
 }
 
-
 .book {
-  margin-left: 20px;
-  margin-bottom: 20px;
-  width: 80%;
+  margin: 20px auto;
+  width: 100%;
   border-radius: 0.5rem;
   text-align: left;
   background-color: rgb(210, 219, 224);
   padding: 10px;
   clear: both;
   height: 250px;
-
 }
 
 .desc-book {
@@ -389,7 +358,6 @@ input {
 }
 
 .setting {
-  height: 350px;
   margin-bottom: 50px;
   background-color: rgb(230, 239, 247);
   border-radius: 0.5rem;
@@ -397,7 +365,6 @@ input {
   padding: 5px;
   text-align: left;
 }
-
 
 .title-books {
   text-align: left;
@@ -472,8 +439,7 @@ form {
   border-radius: 0.5rem;
   margin: auto;
   text-align: center;
-  background-color: #205d96;
-
+  /* background-color: #5c7b97; */
 }
 
 .ctn-title {
@@ -486,50 +452,6 @@ form {
   padding: 0.5px;
 }
 
-input {
-  width: 90%;
-  padding: 0.5rem;
-  border-radius: 4px;
-  box-sizing: border-box;
-  border-color: #55970a;
-  margin: auto;
-  margin-top: 2px;
-}
-
-button {
-  padding: 0.5rem 1rem;
-  background-color: #e27713;
-  color: black;
-  border: none;
-  border-radius: 4px;
-  cursor: pointer;
-  margin-top: 20px;
-  margin-right: 5px;
-  font-weight: bold;
-}
-
-textarea {
-  height: 100px;
-  width: 90%;
-  border-radius: 4px;
-  box-sizing: border-box;
-  margin-left: 2rem;
-  border-color: #7de20a;
-  margin: auto;
-  margin-top: 2px;
-}
-
-
-label {
-  display: inline-block;
-  color: black;
-  text-align: left;
-  margin: auto;
-  margin-top: 2px;
-  margin-bottom: 2px;
-  color: black
-}
-
 .container-lbl {
   text-align: left;
   margin-left: 15px;
@@ -540,4 +462,45 @@ label {
 .error-message {
   color: white;
 }
+
+label {
+  margin-left: 2rem;
+  text-align: left;
+  margin-top: 0;
+  margin-right: 0;
+  font-size: 0.9rem;
+}
+
+input,
+textarea,
+select,
+option {
+  box-sizing: border-box;
+  width: 100%;
+  padding: 0.6rem;
+  border-radius: 0.5rem;
+  border: 1px solid #272875;
+  font-size: 0.9rem;
+  margin-bottom: 3px;
+}
+
+button {
+  padding: 0.5rem 1rem;
+  background-color: #e27713;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 1.05rem;
+  width: 200px;
+  color: white;
+  margin-bottom: 10px;
+}
+
+#imgInput{
+  border: 0;
+  margin: 0px;
+  height: auto;
+}
+
+
 </style>
