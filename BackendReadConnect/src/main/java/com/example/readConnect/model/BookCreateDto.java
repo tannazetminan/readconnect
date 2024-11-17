@@ -10,7 +10,6 @@ public class BookCreateDto {
     private String author;
     private String isbn;
     private String location;  
-    private int soldNum;
     private String category;
     private String description;
 
@@ -45,13 +44,7 @@ public class BookCreateDto {
 	}
 	public void setLocation(String location) {
 		this.location = location;
-	}
-	public int getSoldNum() {
-		return soldNum;
-	}
-	public void setSoldNum(int soldNum) {
-		this.soldNum = soldNum;
-	}    
+	} 
 	public String getCategory() {
 		return category;
 	}

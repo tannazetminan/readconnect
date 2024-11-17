@@ -27,7 +27,7 @@ export default {
 }
 body{
   font-family: Verdana, Geneva, Tahoma, sans-serif;
-  font-size: 13px;
+  font-size: 12px;
 }
 *{
   box-sizing: border-box;

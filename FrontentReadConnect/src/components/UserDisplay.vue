@@ -74,7 +74,6 @@ export default {
 
   components: {
     StarRating,
-    //HeaderComponent,
   },
 
   data() {

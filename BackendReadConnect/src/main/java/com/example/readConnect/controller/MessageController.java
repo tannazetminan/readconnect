@@ -32,6 +32,20 @@ public class MessageController {
 	@Autowired
 	private UserRepository userRepository;
 
+	// Get all messages involving a specific user as sender or receiver
+	@GetMapping("/user/{userId}/all")
+	public ResponseEntity<List<Message>> getAllMessagesByUser(@PathVariable Long userId) {
+		User user = userRepository.findById(userId).orElseThrow(() -> new RuntimeException("User not found"));
+
+		List<Message> messages = messageRepository.findBySenderOrReceiver(user, user);
+
+		if (messages.isEmpty()) {
+			return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+		}
+
+		return new ResponseEntity<>(messages, HttpStatus.OK);
+	}
+
 	// Send a new message
 	@PostMapping("/send")
 	public ResponseEntity<Message> sendMessage(@RequestBody MessageDTO messageDTO) {
@@ -67,21 +81,6 @@ public class MessageController {
 
 		return new ResponseEntity<>(allMessages, HttpStatus.OK);
 	}
-
-	// Get all messages involving a specific user as sender or receiver
-	@GetMapping("/user/{userId}/all")
-	public ResponseEntity<List<Message>> getAllMessagesByUser(@PathVariable Long userId) {
-		User user = userRepository.findById(userId).orElseThrow(() -> new RuntimeException("User not found"));
-
-		List<Message> messages = messageRepository.findBySenderOrReceiver(user, user);
-
-		if (messages.isEmpty()) {
-			return new ResponseEntity<>(HttpStatus.NO_CONTENT);
-		}
-
-		return new ResponseEntity<>(messages, HttpStatus.OK);
-	}
-
 
 	@GetMapping("/conversations/{userId}")
 	public ResponseEntity<?> getUserConversations(@PathVariable Long userId) {

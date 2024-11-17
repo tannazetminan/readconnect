@@ -38,8 +38,8 @@ public class Book {
     private String author;
     private String isbn;
     private String location;  // For rare book tracking
-    private double averageRating;
-    private int totalRatings;
+    private double totalRatingScore;
+    private int ratingCount;
     private int soldNum;
     
     @Lob
@@ -80,8 +80,8 @@ public class Book {
 		this.author = author;
 		this.isbn = isbn;
 		this.location = location;
-		this.averageRating = averageRating;
-		this.totalRatings = totalRatings;
+		this.totalRatingScore = averageRating;
+		this.ratingCount = totalRatings;
 		this.soldNum = soldNum;
 		this.category = category;
 	}
@@ -155,18 +155,23 @@ public class Book {
 	public void setLocation(String location) {
 		this.location = location;
 	}
-	public double getAverageRating() {
-		return averageRating;
+	
+	public double getTotalRatingScore() {
+		return totalRatingScore;
 	}
-	public void setAverageRating(double averageRating) {
-		this.averageRating = averageRating;
+
+	public void setTotalRatingScore(double totalRatingScore) {
+		this.totalRatingScore = totalRatingScore;
 	}
-	public int getTotalRatings() {
-		return totalRatings;
+
+	public int getRatingCount() {
+		return ratingCount;
 	}
-	public void setTotalRatings(int totalRatings) {
-		this.totalRatings = totalRatings;
+
+	public void setRatingCount(int ratingCount) {
+		this.ratingCount = ratingCount;
 	}
+
 	public int getSoldNum() {
 		return soldNum;
 	}
@@ -193,5 +198,10 @@ public class Book {
 //	public void setIntrests(Set<Intrest> intrests) {
 //		this.intrests = intrests;
 //	}
+	
+	//methods
+	public double calculateAverageRating() {
+	    return (ratingCount > 0) ? totalRatingScore / ratingCount : 0;
+	}
 	
 }

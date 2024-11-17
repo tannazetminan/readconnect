@@ -58,6 +58,8 @@
 
 <script>
 import FetchDataService from "../services/FetchDataService";
+import MessageService from "../services/MessageService";
+
 
 export default {
   name: "MessageChat",
@@ -68,9 +70,9 @@ export default {
       messages2: [],
       fullName: "",
       senderId: parseInt(localStorage.getItem("userId")),
-      receiverUsername: "",  // Input for the receiver's username
-      receiverId: null,      // Retrieved ID of the receiver
-      messageContent: "",    // Content of the message to be sent
+      receiverUsername: "",  
+      receiverId: null,      
+      messageContent: "",    
     };
   },
   methods: {
@@ -81,7 +83,7 @@ export default {
     }
 
     try {
-      const response = await FetchDataService.getMessagesBetweenUsers(this.senderId, this.receiverId);
+      const response = await MessageService.getMessagesBetweenUsers(this.senderId, this.receiverId);
       this.messages = response.data.reverse();
       this.scrollToBottom();
     } catch (error) {
@@ -109,7 +111,7 @@ export default {
         content: this.messageContent,
       };
 
-      const response = await FetchDataService.sendMessage(messageData);
+      const response = await MessageService.sendMessage(messageData);
       this.messages.push(response.data); // Add new message to the list
       this.messages.sort((a, b) => new Date(a.timestamp) - new Date(b.timestamp)); // Sort messages after sending
       this.messageContent = ""; // Clear the input field

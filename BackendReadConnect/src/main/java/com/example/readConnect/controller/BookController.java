@@ -8,7 +8,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.example.readConnect.model.*;
-import com.example.readConnect.service.BookService;
+import com.example.readConnect.service.*;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -23,7 +23,10 @@ public class BookController {
 
     @Autowired
     private BookService bookService;
+    
 
+    @Autowired
+    private CommentService commentService;
 
     // get all books
     @GetMapping
@@ -40,8 +43,6 @@ public class BookController {
         }
     }
 
-
-
     // get a single book by ID
     @GetMapping("/{id}")
     public ResponseEntity<Book> getBookById(@PathVariable Long id) {
@@ -49,8 +50,7 @@ public class BookController {
                 .map(worker -> new ResponseEntity<>(worker, HttpStatus.OK))
                 .orElseGet(() -> new ResponseEntity<>(HttpStatus.NOT_FOUND));
     }
- 
-    
+     
     @PostMapping("/create")
     public ResponseEntity<Book> createBook(
             @RequestParam Long writerId, 
@@ -163,7 +163,66 @@ public class BookController {
 //    }
 
 
-    // get book base on intrests
+    
+    
+    // Add rating to a book
+    @PostMapping("/{bookId}/rate")
+    public ResponseEntity<Book> rateBook(
+            @PathVariable Long bookId, 
+            @RequestParam Long userId, 
+            @RequestParam double rating) {
+        try {
+            Book updatedBook = bookService.rateBook(bookId, userId, rating);
+            return new ResponseEntity<>(updatedBook, HttpStatus.OK);
+        } catch (RuntimeException e) {
+            return new ResponseEntity<>(null, HttpStatus.BAD_REQUEST);
+        }
+    }
+
+    
+    
+ // Add a comment to a book
+    @PostMapping("/{bookId}/comment")
+    public ResponseEntity<Comment> addComment(
+            @PathVariable Long bookId, 
+            @RequestParam Long userId, 
+            @RequestParam String content) {
+        try {
+            Comment newComment = commentService.addComment(userId, bookId, content);
+            return new ResponseEntity<>(newComment, HttpStatus.CREATED);
+        } catch (RuntimeException e) {
+            return new ResponseEntity<>(null, HttpStatus.BAD_REQUEST);
+        }
+    }
+
+    // Get all comments for a specific book
+    @GetMapping("/{bookId}/comments")
+    public ResponseEntity<List<Comment>> getComments(@PathVariable Long bookId) {
+        try {
+            List<Comment> comments = commentService.getCommentsForBook(bookId);
+            return new ResponseEntity<>(comments, HttpStatus.OK);
+        } catch (RuntimeException e) {
+            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
+    
+
+    // get all books for a specific user
+    @GetMapping("/user/{userId}")
+    public ResponseEntity<List<Book>> getBooksByUserId(@PathVariable Long userId) {
+        try {
+            List<Book> books = bookRepository.findByWriterId(userId);
+            if (books.isEmpty()) {
+                return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+            }
+            return new ResponseEntity<>(books, HttpStatus.OK);
+        } catch (Exception e) {
+            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
+ // get book base on intrests
     @GetMapping("/intrests/{intrest}")
     public ResponseEntity<List<Book>> getBookByIntrests(@PathVariable String intrest){
     	
@@ -178,22 +237,6 @@ public class BookController {
     	    return new ResponseEntity<>( HttpStatus.INTERNAL_SERVER_ERROR);
     	}
 
-    }
-
-
-
-    // get all books for a specific user
-    @GetMapping("/user/{userId}")
-    public ResponseEntity<List<Book>> getBooksByUserId(@PathVariable Long userId) {
-        try {
-            List<Book> books = bookRepository.findByWriterId(userId);
-            if (books.isEmpty()) {
-                return new ResponseEntity<>(HttpStatus.NOT_FOUND);
-            }
-            return new ResponseEntity<>(books, HttpStatus.OK);
-        } catch (Exception e) {
-            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
-        }
     }
 
 

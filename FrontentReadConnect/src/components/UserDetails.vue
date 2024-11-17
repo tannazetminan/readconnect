@@ -13,18 +13,18 @@
       <!--edit profile section-->
       <div class="setting">
         <div class="edit-preferences" @click="editPreferences">
-          <h2>Profile</h2>
-          <img src="images/editar.png" class="edit" @click="editPreferences" />
+          <h2>Profile
+          <img src="images/editar.png" class="edit" @click="editPreferences" /></h2>
         </div>
         <div v-if="showForm" class="container-profile">
           <form @submit.prevent="savePreferences">
-            <input type="text" id="username" v-model="profile_settings.username" placeholder="Username">
+            <input type="text" id="username" v-model="profile_settings.username" placeholder="Username" style="margin: 0;">
             <!-- <input type="text" id="email" v-model="profile_settings.email" placeholder="Email"> -->
-            <input type="text" id="phone" v-model="profile_settings.phone" placeholder="Phone">
-            <input type="text" id="age" v-model="profile_settings.age" placeholder="Age">
-            <input type="text" id="country" v-model="profile_settings.country" placeholder="Country">
-            <input type="text" id="intrests" v-model="profile_settings.intrests" placeholder="psychology">
-            <input type="text" id="mode" v-model="profile_settings.mode" placeholder="false">
+            <input type="text" id="phone" v-model="profile_settings.phone" placeholder="Phone" style="margin: 0;">
+            <input type="text" id="age" v-model="profile_settings.age" placeholder="Age" style="margin: 0;">
+            <input type="text" id="country" v-model="profile_settings.country" placeholder="Country" style="margin: 0;">
+            <input type="text" id="intrests" v-model="profile_settings.intrests" placeholder="psychology" style="margin: 0;">
+            <input type="text" id="mode" v-model="profile_settings.mode" placeholder="false" style="margin: 0;">
             <button type="submit" @click="savePreferences">Save</button>
             <button type="submit" @click="hideForm">Cancel</button>
           </form>
@@ -49,7 +49,7 @@
       <!-- Post a New Book Section -->
       <div class="container-form">
         <div class="ctn-title">
-          <h2 class="title">Post a New Book</h2>
+          <h3 class="title">Post a New Book</h3>
         </div>
         <form @submit.prevent="handleSubmit">
           <div class="container-lbl">
@@ -83,16 +83,22 @@
           <p class="desc-book">Description: {{ book.description }}</p>
           <p class="desc-book">ISBN: {{ book.isbn }}</p>
           <p class="desc-book">Location: {{ book.location }}</p>
+          <div class="rating-stars">
+              <span v-for="star in 5" :key="star" 
+                    :class="['star', star <= (  book.totalRatingScore /   book.ratingCount  ) ? 'filled' : '']" >
+                  ★
+              </span>
+          </div>     
         </div>
         <div style="display: block; float: right;">
           <img v-if="book.image" :src="getImageSrc(book.image)" alt="Book Image" class="bookImg" />
           <img v-else src="images/book.jpg" alt="Book Image" class="bookImg" />
         </div>
-        <p class="desc-book">
+        <!-- <p class="desc-book">
           <star-rating v-model:rating="book.rating" star-size="35" show-rating=False animate=true
             @update:rating="setRating(book.id, $event)">
           </star-rating>
-        </p>
+        </p> -->
       </div>
 
     </div>
@@ -100,16 +106,16 @@
 </template>
 
 <script>
-import FetchDataServices from '../services/FetchDataService'
-import StarRating from 'vue-star-rating';
+import FetchDataServices from '../services/FetchDataService';
+import BookService from "../services/BookService";
+// import StarRating from 'vue-star-rating';
 
 export default {
   name: "userDetails",
 
-  components: {
-    StarRating,
-    //HeaderComponent,
-  },
+  // components: {
+  //   StarRating,
+  // },
 
   data() {
     return {
@@ -237,7 +243,7 @@ export default {
         formData.append('image', this.newBook.image);
       }
 
-      FetchDataServices.postNewBook(userId, formData)
+      BookService.postNewBook(userId, formData)
         .then(response => {
           console.log(response);
           this.fetchBooks(userId);
@@ -256,7 +262,7 @@ export default {
 
     //showing books written by this user
     fetchBooks(id) {
-      FetchDataServices.getBookByUserId(id)
+      BookService.getBookByUserId(id)
         .then(response => {
           this.books = response.data.reverse();
         })
@@ -272,7 +278,7 @@ export default {
     },
 
     setRating(bookId, rating) {
-      FetchDataServices.setbookRating(bookId, rating)
+      BookService.setbookRating(bookId, rating)
         .then(response => {
           console.log("Book rating updated:", bookId, "Rating:", rating);
           console.log(response)
@@ -296,204 +302,179 @@ export default {
 </script>
 
 <style scoped>
+
 .container-cards {
-  width: 95%;
+  width: 90%;
+  max-width: 1400px;
   margin: auto;
   display: flex;
+  flex-wrap: wrap;
   font-size: 1rem;
+  gap: 20px;
 }
 
+/* Profile Section */
 .profile {
   display: block;
-  margin-top: 25px;
-  height: 150px;
-  width: 150px;
-}
-
-.cards-description {
-  text-align: center;
-  width: 25%;
-  align-items: flex-start;
-  border-radius: 0.5rem;
-}
-
-.card-books {
-  width: 69%;
-  text-align: center;
-  margin-left: auto;
-  margin-right: auto;
-  margin-top: 20px;
-}
-
-.book {
   margin: 20px auto;
-  width: 100%;
-  border-radius: 0.5rem;
-  text-align: left;
-  background-color: rgb(210, 219, 224);
-  padding: 10px;
-  clear: both;
   height: 250px;
-}
-
-.desc-book {
-  margin-left: 30px;
-}
-
-.cards {
-  background-color: rgb(121, 168, 194);
-  align-items: flex-start;
+  width: 250px;
+  border-radius: 50%;
+  border: 3px solid #5c7b97;
 }
 
 .personal-data {
-  background-color: rgb(230, 239, 247);
+  background-color: #f8f9fb;
   border-radius: 0.5rem;
-  padding: 5px;
-  margin-top: 15px;
+  padding: 15px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  margin: 10px;
+  margin-bottom: 25px;
+  text-align: center;
+}
+
+.container-profile{
+  padding: 0;
+}
+
+.cards-description {
+  width: 30%;
+  align-items: flex-start;
+  border-radius: 0.5rem;
+  min-width: 300px;
+
 }
 
 .data-description {
-  margin-bottom: 15px;
-  padding: 2px;
+  margin: 10px 0;
+  color: #333;
+  text-align: center;
+  font-weight: bold;
 }
 
 .setting {
-  margin-bottom: 50px;
-  background-color: rgb(230, 239, 247);
+  background-color: #f8f9fb;
   border-radius: 0.5rem;
-  margin-top: 15px;
-  padding: 5px;
-  text-align: left;
-}
-
-.title-books {
-  text-align: left;
-}
-
-.fetchData {
-  margin-left: 30px;
-  margin-bottom: 40px;
-  background-color: transparent;
-  border: none;
-  color: rgb(60, 172, 15);
-  cursor: pointer;
-  padding: 0;
-  font-weight: bold;
+  padding: 15px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  margin: 10px;
 }
 
 .edit {
-  width: 30px;
-  height: 40px;
-}
-
-.edit-preferences {
-  display: flex
+  width: 35px;
+  height: 35px;
+  margin-left: auto;
+  display: flex;
+  margin-top: 0px;
 }
 
 h2 {
-  margin-top: 15px;
-  width: 90%;
-  text-align: center;
-}
-
-.bookImg {
-  border-radius: 10px;
-  width: 200px;
-  margin-left: auto;
-}
-
-.desc-books1 {
-  text-align: right;
-  margin-right: 15px;
-  color: rgb(85, 80, 76)
-}
-
-.container-apply-btn {
-  text-align: right;
-}
-
-.apply-btn {
-  margin-left: 30px;
-  margin-bottom: 20px;
-  background-color: transparent;
-  border: none;
-  color: rgb(214, 132, 65);
-  cursor: pointer;
-  padding: 0;
-  font-weight: bold;
-  margin-right: 15px;
-}
-
-.container-form {
-  background-color: #dde6ee;
-  height: 450px;
-  border-radius: 0.5rem;
-  margin: auto;
-  margin-top: 10px;
+  display: flex;
+  text-align: left;
 }
 
 form {
-  padding: 2px;
-  width: 80%;
-  height: 350px;
-  border-radius: 0.5rem;
-  margin: auto;
-  text-align: center;
-  /* background-color: #5c7b97; */
-}
-
-.ctn-title {
-  margin-top: 25px;
-  padding: 0.5px;
-}
-
-.title {
-  margin-top: 25px;
-  padding: 0.5px;
-}
-
-.container-lbl {
-  text-align: left;
-  margin-left: 15px;
-  margin-bottom: 2px;
-  margin-top: 10px;
-}
-
-.error-message {
-  color: white;
-}
-
-label {
-  margin-left: 2rem;
-  text-align: left;
-  margin-top: 0;
-  margin-right: 0;
-  font-size: 0.9rem;
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+  margin: 20px 0;
 }
 
 input,
 textarea,
-select,
-option {
-  box-sizing: border-box;
+select {
   width: 100%;
-  padding: 0.6rem;
-  border-radius: 0.5rem;
-  border: 1px solid #272875;
-  font-size: 0.9rem;
-  margin-bottom: 3px;
+  padding: 10px;
+  font-size: 1rem;
+  border: 1px solid #cdd9e3;
+  border-radius: 5px;
+  box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.1);
+  margin: 5px;
+  height: 40px;
 }
 
 button {
-  padding: 0.5rem 1rem;
+  padding: 10px;
   background-color: #e27713;
-  border: none;
-  border-radius: 4px;
-  cursor: pointer;
-  font-size: 1.05rem;
-  width: 200px;
   color: white;
-  margin-bottom: 10px;
+  font-size: 1rem;
+  font-weight: bold;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+  width: 100%;
+}
+
+button:hover {
+  background-color: #cf6b0b;
+}
+
+/* Book Section */
+.card-books {
+  flex: 1;
+  width: 95%;
+  margin-top: 20px;
+  padding: 20px;
+  background-color: #f4f6f9;
+  border-radius: 0.5rem;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.book {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  padding: 15px;
+  margin: 15px 0;
+  background-color: #e9eff6;
+  border-radius: 0.5rem;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.desc-book {
+  font-size: 0.9rem;
+  color: #333;
+  line-height: 1.4;
+  margin-bottom: 5px;
+}
+
+.bookImg {
+  height: 150px;
+  width: auto;
+  border-radius: 0.5rem;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.container-form {
+  background-color: #dde6ee;
+  border-radius: 0.5rem;
+  padding: 20px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  margin-bottom: 20px;
+}
+
+.error-message {
+  color: red;
+  font-size: 0.85rem;
+  text-align: center;
+}
+
+
+.rating-stars {
+    display: flex;
+    gap: 8px;
+    margin-top: 10px;
+}
+
+.star {
+    font-size: 1.75rem;
+    color: #ddd;
+    transition: color 0.3s;
+}
+
+.star.filled {
+    color: #ff9800;
 }
 
 #imgInput{
@@ -501,6 +482,5 @@ button {
   margin: 0px;
   height: auto;
 }
-
 
 </style>

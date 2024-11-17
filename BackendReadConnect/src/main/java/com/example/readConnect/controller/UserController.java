@@ -36,15 +36,7 @@ public class UserController {
         return userRepository.findAll();
     }
 
-
-    // get a single user by ID
-    @GetMapping("/{id}")
-    public ResponseEntity<User> getUserById(@PathVariable Long id) {
-        return userRepository.findById(id)
-                .map(user -> new ResponseEntity<>(user, HttpStatus.OK))
-                .orElseGet(() -> new ResponseEntity<>(HttpStatus.NOT_FOUND));
-    }
-
+   
     // create a new user, using /users
     @PostMapping
     public ResponseEntity<User> createUser(@RequestBody User user) {
@@ -52,24 +44,7 @@ public class UserController {
         return new ResponseEntity<>(savedUser, HttpStatus.CREATED);
     }
 
-    // update an existing user, using /users/{id}
-    @PutMapping("/{id}")
-    public ResponseEntity<User> updateUser(@PathVariable Long id, @RequestBody User userDetails) {
-        User user = userRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("User not found with id " + id));
-
-        user.setUsername(userDetails.getUsername());
-//        user.setPassword(userDetails.getPassword());
-//        user.setEmail(userDetails.getEmail());
-        user.setAge(userDetails.getAge());
-        user.setCountry(userDetails.getCountry());
-        user.setMode(userDetails.getMode());
-        user.setIntrests(userDetails.getIntrests());
-        user.setPhone(userDetails.getPhone());
-        final User updatedUser = userRepository.save(user);
-        return ResponseEntity.ok(updatedUser);
-    }
-
+    
     // login a user
     @PostMapping("/login")
     public ResponseEntity<?> loginUser(@RequestBody Map<String, String> credentials) {
@@ -97,6 +72,34 @@ public class UserController {
         Map<String, Boolean> response = new HashMap<>();
         response.put("exists", emailExists);
         return ResponseEntity.ok(response);
+    }
+    
+    
+    // get a single user by ID
+    @GetMapping("/{id}")
+    public ResponseEntity<User> getUserById(@PathVariable Long id) {
+        return userRepository.findById(id)
+                .map(user -> new ResponseEntity<>(user, HttpStatus.OK))
+                .orElseGet(() -> new ResponseEntity<>(HttpStatus.NOT_FOUND));
+    }
+    
+    
+    // update an existing user, using /users/{id}
+    @PutMapping("/{id}")
+    public ResponseEntity<User> updateUser(@PathVariable Long id, @RequestBody User userDetails) {
+        User user = userRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("User not found with id " + id));
+
+        user.setUsername(userDetails.getUsername());
+//        user.setPassword(userDetails.getPassword());
+//        user.setEmail(userDetails.getEmail());
+        user.setAge(userDetails.getAge());
+        user.setCountry(userDetails.getCountry());
+        user.setMode(userDetails.getMode());
+        user.setIntrests(userDetails.getIntrests());
+        user.setPhone(userDetails.getPhone());
+        final User updatedUser = userRepository.save(user);
+        return ResponseEntity.ok(updatedUser);
     }
     
     

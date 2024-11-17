@@ -19,7 +19,8 @@
 </template>
 
 <script>
-import FetchDataService from "../services/FetchDataService";
+import MessageService from "../services/MessageService";
+
 
 export default {
   name: "MessagesList",
@@ -35,7 +36,7 @@ export default {
     // Fetch latest messages from each conversation
     async fetchConversations() {
     try {
-      const response = await FetchDataService.getUserConversations(this.senderId);
+      const response = await MessageService.getUserConversations(this.senderId);
       
       if (!response.data || !Array.isArray(response.data)) {
         throw new Error("Unexpected response structure");

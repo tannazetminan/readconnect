@@ -24,7 +24,8 @@
     <div v-if="books && books.items && books.items.length" class="book-grid">
       <div class="book-card" v-for="book in books.items" :key="book.id">
         <!-- Book Cover -->
-        <img :src="book.volumeInfo.imageLinks?.thumbnail" alt="Book cover" />
+        <!-- <img :src="book.volumeInfo.imageLinks?.thumbnail" alt="Book cover" /> -->
+        <img :src="book.volumeInfo.imageLinks?.thumbnail || require('../../public/images/book.jpg')" alt="Book cover" style="max-height: 200px;"/>
         <!-- Book Title -->
         <h3>{{ book.volumeInfo.title }}</h3>
         <!-- Book Authors -->
@@ -136,7 +137,6 @@ export default {
         }
       }
     },
-
     // Fetch books based on predefined topic/category
     fetchByTopic(topic) {
       this.category = topic;
@@ -178,12 +178,14 @@ export default {
   width: 95%;
   margin: 0 auto;
   text-align: center;
+  max-width: 1400px;
 }
 
 .search-container h1 {
   text-align: left;
   margin-left: 20px;
   font-size: 2.5rem;
+  color: #555;
 }
 
 /* Search Form styling */
@@ -229,7 +231,7 @@ export default {
 .topics button {
   margin: 5px;
   padding: 10px 15px;
-  background-color: #2ecc71;
+  background-color: #ff8800;
   color: white;
   border: none;
   border-radius: 5px;
@@ -239,7 +241,7 @@ export default {
 }
 
 .topics button:hover {
-  background-color: #27ae60;
+  background-color: #636363;
 }
 
 /* Grid Layout for Books */
@@ -259,7 +261,7 @@ export default {
   padding: 15px;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
   transition: transform 0.2s ease-in-out;
-  max-height: 400px;
+  max-height: 450px;
   overflow-y: scroll;
   overflow-x: hidden;
   text-align: center;

@@ -1,218 +1,349 @@
 <template>
     <div v-if="book.title" class="container-cards">
-
-        <!-- book info-->
+        <!-- Book Info -->
         <div class="cards-description">
-
-            <!-- book img & tile-->
             <div class="personal-data">
+                <p class="data-description"><strong>{{ book.title }}</strong></p>
                 <p>
-                    <img v-if="book.image" :src="getImageSrc(book.image)" alt="Book Image" class="profile" />
-                    <img v-else src="../../public/images/book.jpg" alt="Book Image" class="profile" />
+                    <img v-if="book.image" :src="getImageSrc(book.image)" alt="Book Image" class="bookImg" />
+                    <img v-else src="../../public/images/book.jpg" alt="Book Image" class="bookImg" />
                 </p>
-                <p class=" data-description"><strong>{{ book.title }}</strong></p>
             </div>
-
-            <!-- book details-->
             <div class="setting">
-                <div class="edit-preferences">
-                    <h3>Book Details</h3>
-                </div>
+                <h3>Book Details</h3>
+                <p><strong>Author: </strong>{{ book.author }}</p>
+                <p><strong>ISBN: </strong>{{ book.isbn }}</p>
+                <p><strong>Description:</strong></p><p>{{ book.description }}</p>
+                <p v-if="book.writer.mode === false">
+                    <strong>Post Creator: </strong>
+                    <span @click="sendData(book.writer.id)" class="creator">{{ book.writer.username }}</span>
+                </p>
+                <p v-else><strong>Post Creator: </strong>{{ book.writer.username }}</p>
+                <!-- Rating Section -->
                 <div>
-                    <p><span style="font-weight: bold;">Author: </span>{{ book.author }}</p>
-                    <p v-if="book.writer.mode == false">
-                        <span style="font-weight: bold;">Post Creator: </span>
-                        <span @click="sendData(book.writer.id)" class="creator">{{ book.writer.username }}</span>
-                    </p>
-                    <p v-else> <span style="font-weight: bold;">Post Creator: </span>{{ book.writer.username }} </p>
-                    <p><span style="font-weight: bold;">ISBN: </span>{{ book.isbn }}</p>
-                    <p>
-                        <span style="font-weight: bold;">Description:<br/></span> 
-                        <span class="data-description">{{book.description }}</span> 
-                    </p>
+                    <p><strong>Total Voters: </strong> {{ book.ratingCount }} votes</p>
+                    <div class="rating-stars">
+                        <span v-for="star in 5" :key="star" 
+                              :class="['star', star <= (  book.totalRatingScore /   book.ratingCount  ) ? 'filled' : '']" 
+                              @click="rateBook(star)">
+                            ★
+                        </span>
+                    </div>                     
                 </div>
-
             </div>
         </div>
-
-        <!-- book comments-->
+        <!-- Comments Section -->
         <div class="card-pf">
-            <div class=" profile-desc">
-
-                <h3>Comments for this book:</h3>
-                no comment yet
-
-                <!-- <h3> Technical Skills</h3>
-                <ul>
-                    <li v-for="(skill, index) in book.skills" :key="index">{{ skill.name }}</li>
-                </ul>
-                <h3> Soft Skills</h3>
-                <ul>
-                    <li>Customer service skills</li>
-                    <li>Effective communication with clients and colleagues</li>
-                    <li>Teamwork</li>
-                    <li>Adaptability to different work environments</li>
-                    <li>Problem-solving</li>
-                    <li>Time management and organization</li>
-                    
-                </ul> -->
-
-
-
+            <div class="profile-desc">
+                <!-- <h3>Comments for this Book:</h3>-->
+                <div v-if="comments.length === 0" class="no-comments">
+                    No comments yet. Be the first to comment!
+                </div>
+                <div v-else class="comments-list">
+                    <div v-for="comment in comments" :key="comment.id" class="comment">
+                        <div class="comment-header">
+                            <span @click="sendData(comment.user.id)" style="font-weight: bold; cursor: pointer;" >{{ comment.user.username }}</span>
+                            <span class="comment-timestamp">{{ formatTimestamp(comment.timestamp) }}</span>
+                        </div>
+                        <p class="comment-content">{{ comment.content }}</p>
+                    </div>
+                </div>
+                <!-- Add Comment -->
+                <div class="add-comment">
+                    <textarea v-model="newComment" placeholder="Write your comment here..."></textarea>
+                    <button @click="addComment">Submit Comment</button>
+                </div>
             </div>
-
-
         </div>
+
     </div>
     <div v-else>
-        <h1>This Book Doesn't Excist!!!</h1>
+        <h1>This Book Doesn't Exist!!!</h1>
     </div>
 </template>
 
 <script>
-
-import FetchDataServices from '../services/FetchDataService'
+import BookService from "../services/BookService";
 
 export default {
     name: "BookDetails",
-
     data() {
         return {
-            newLogin: false,
-            book: {
-                title: "",
-                description: "",
-                isbn: "",
-                author: "",
-            },
-            date: "",
-            random_number: 0,
-        }
+            book: {},
+            comments: [],
+            newComment: "",
+            userRating: 0, // Temporary for user input
+        };
     },
-
     methods: {
-        retrievebook(bookId) {
-            FetchDataServices.getBookById(bookId)
-                .then(response => {
-                    this.book = response.data
+        retrieveBook(bookId) {
+            BookService.getBookById(bookId)
+                .then((response) => {
+                    this.book = response.data;
                 })
-                .catch(error => {
-                    console.log(error)
+                .catch((error) => {
+                    console.error(error);
+                });
+        },
+        fetchComments(bookId) {
+            BookService.getComments(bookId)
+                .then((response) => {
+                    this.comments = response.data;
                 })
+                .catch((error) => {
+                    console.error(error);
+                });
+        },
+        addComment() {
+            const bookId = this.$route.params.bookId;
+            const userId = localStorage.getItem("userId");
+            if (this.newComment.trim()) {
+                BookService.addComment(bookId, userId, this.newComment)
+                    .then(() => {
+                        this.newComment = "";
+                        this.fetchComments(bookId);
+                    })
+                    .catch((error) => {
+                        alert("Failed to submit comment: " + error.response?.data?.message || error.message);
+                    });
+            } else {
+                alert("Comment cannot be empty!");
+            }
+        },
+        formatTimestamp(timestamp) {
+            const date = new Date(timestamp);
+            return date.toLocaleString(); 
+        },
+        rateBook(rating) {
+            const bookId = this.$route.params.bookId;
+            const userId = localStorage.getItem("userId");
+            BookService.rateBook(bookId, rating, userId)
+                .then(() => {
+                    this.retrieveBook(bookId); 
+                })
+                .catch((error) => {
+                    alert("Failed to rate book: " + error.response?.data?.message || error.message);
+                });
         },
         getImageSrc(image) {
             return `data:image/jpg;base64,${image}`;
         },
-
-        //going to creator page
         sendData(userId) {
-            this.$router.push({ name: "UserDisplay", params: { userId: userId } })
-        }
+            this.$router.push({ name: "UserDisplay", params: { userId } });
+        },
     },
-
     mounted() {
         const bookId = this.$route.params.bookId;
-        if (bookId) {
-            this.retrievebook(bookId);
-        } else {
-            console.error('bookId is undefined');
-            this.message = "NA"
-        }
-    }
-}
-
-
+        this.retrieveBook(bookId);
+        this.fetchComments(bookId);
+    },
+};
 </script>
 
+
 <style scoped>
+/* Container for the entire page */
+*{
+}
+
 .container-cards {
-    width: 90%;
-    margin: auto;
-    overflow: auto;
+    max-width: 1400px;
+    margin: 0 auto;
     display: flex;
-    font-size: 1rem;
-    font-weight: normal;
+    flex-wrap: wrap;
+    color: #333;
+    padding: 20px;
+    font-size: 15px;
+    width: 80%;
 }
 
-.profile {
-    display: block;
-    margin-top: 25px;
-    height: 350px;
-    width: 250px;
-}
-
-.creator {
-    font-weight: bold;
-    cursor: cell;
-    color: white;
-    animation: backwards;
-    background-color: #e27713;
-    padding: 6px 10px;
-    border-radius: 10%;
-}
-
-.cards-description {
+.data-description{
     text-align: center;
-    width: 35%;
-    height: fit-content;
-    align-items: flex-start;
-    border-radius: 0.5rem;
+    font-size: x-large;
 }
 
-.card-pf {
-    width: 64%;
-    text-align: left;
-    margin-left: 100px;
+/* Profile Image styling */
+.bookImg {
+    display: block;
+    width: 100%;
+    max-width: 250px;
+    margin: 0 auto 25px;
+    border-radius: 8px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
 }
 
-.profile-desc {
-    margin-left: 20px;
-    margin-bottom: 20px;
-    width: 69%;
-    border-radius: 0.5rem;
-    text-align: left;
-    background-color: white;
-    padding: 5px;
-}
-
-.personal-data {
-    background-color: rgb(230, 239, 247);
-    border-radius: 0.5rem;
-    padding: 5px;
-    margin-top: 15px;
-}
-
-.data-description {
-    margin-bottom: 15px;
-    padding: 2px;
+/* Main Book Information */
+.cards-description {
+    width: 30%;
+    padding: 20px;
+    background-color: #fff;
+    border-radius: 10px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+    margin-right: 20px;
 }
 
 .setting {
-    height: 350px;
-    margin-bottom: 50px;
-    background-color: rgb(230, 239, 247);
-    border-radius: 0.5rem;
-    margin-top: 15px;
-    padding: 20px;
-    text-align: left;
-    font-size: 0.93rem;
+    background-color: #f8f9fa;
+    border-radius: 8px;
+    padding: 15px;
+    box-shadow: 0 1px 6px rgba(0, 0, 0, 0.1);
 }
 
 h3 {
-    margin-top: 15px;
-    text-align: center;
+    margin-top: 0;
+    color: #333;
+    font-size: 1.25rem;
 }
 
-.title {
+/* Author and rating section */
+.creator {
+    font-weight: bold;
+    cursor: pointer;
+    color: #fff;
+    background-color: #ff9f00;
+    padding: 6px 12px;
+    border-radius: 8px;
+    text-transform: capitalize;
+}
+
+.rating-stars {
+    display: flex;
+    gap: 8px;
+    margin-top: 10px;
+}
+
+.star {
+    font-size: 1.75rem;
+    color: #ddd;
+    cursor: pointer;
+    transition: color 0.3s;
+}
+
+.star.filled {
+    color: #ff9800;
+}
+
+.comment {
     margin-top: 25px;
-    padding: 0.5px;
 }
 
-.title-pr {
-    text-align: left;
+/* Comments Section */
+.card-pf {
+    width: 65%;
+    padding: 20px;
+    background-color: #fff;
+    border-radius: 10px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
 }
 
-.desc {
-    text-align: justify;
+.profile-desc {
+    margin-top: 20px;
+}
+
+.no-comments {
+    text-align: center;
+    font-size: 1.2rem;
+    color: #888;
+}
+
+.comments-list {
+    margin-bottom: 20px;
+}
+
+.comment-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 10px;
+}
+
+.comment-header strong {
+    font-size: 1.1rem;
+    color: #333;
+}
+
+.comment-timestamp {
+    font-size: 0.9rem;
+    color: #777;
+}
+
+.comment-content {
+    font-size: 1rem;
+    color: #555;
+    line-height: 1.6;
+}
+
+.add-comment {
+    margin-top: 20px;
+    display: flex;
+    flex-direction: column;
+}
+
+textarea {
+    width: 100%;
+    min-height: 100px;
+    border: 1px solid #ccc;
+    border-radius: 8px;
+    padding: 12px;
+    font-size: 1rem;
+    resize: none;
+    box-sizing: border-box;
+    margin-bottom: 15px;
+    background-color: #f9f9f9;
+    font-family: Verdana, Geneva, Tahoma, sans-serif;
+}
+
+textarea:focus {
+    border-color: #007bff;
+    background-color: #fff;
+    outline: none;
+}
+
+button {
+    padding: 10px 15px;
+    background-color: #ff8800;
+    color: #fff;
+    border: none;
+    border-radius: 8px;
+    font-size: 1rem;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+button:hover {
+    background-color: #218838;
+}
+
+button:focus {
+    outline: none;
+}
+
+/* Add space between each comment */
+.comment {
+    background-color: #f9f9f9;
+    border: 1px solid #eee;
+    padding: 15px;
+    margin-bottom: 15px;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+/* Comment formatting */
+.comment-content {
+    margin-top: 10px;
+    line-height: 1.6;
+}
+
+/* Media Query for responsiveness */
+@media (max-width: 768px) {
+    .container-cards {
+        flex-direction: column;
+        padding: 10px;
+    }
+
+    .cards-description, .card-pf {
+        width: 100%;
+        margin-right: 0;
+    }
 }
 </style>

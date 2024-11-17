@@ -56,7 +56,8 @@
 
 
 <script>
-import FetchDataService from "../services/FetchDataService";
+import BookService from "../services/BookService";
+
 
 export default {
   name: "BooksList",
@@ -67,12 +68,11 @@ export default {
       id: 1
 
     }
-
   },
 
   methods: {
     fetchBooks() {
-      FetchDataService.getAllBooks()
+      BookService.getAllBooks()
         .then(response => {
           this.books = response.data
           console.log(response)
@@ -87,6 +87,8 @@ export default {
     getImageSrc(image) {
       return `data:image/jpg;base64,${image}`;
     },
+
+    //going to bookdetails page carring the bookId
     sendData(bookId){         
         console.log("book id", bookId)
         this.$router.push({name:"BookDetails", params: { bookId: bookId }})
