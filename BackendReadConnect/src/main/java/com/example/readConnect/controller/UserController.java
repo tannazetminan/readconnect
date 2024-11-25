@@ -117,19 +117,4 @@ public class UserController {
     }
 
     
-//    // update an existing user
-//    @PutMapping("/{id}")
-//    public ResponseEntity<User> updateUser(@PathVariable Long id, @RequestBody UserUpdateDto userDetailsDto) {
-//        User user = userRepository.findById(id).orElseThrow(() -> new RuntimeException("User not found with id " + id));
-//
-//        user.setUsername(userDetailsDto.getUsername());
-//        user.setEmail(userDetailsDto.getEmail());
-//        user.setPassword(userDetailsDto.getPassword());
-//        user.setAge(userDetailsDto.getAge());
-//        user.setCountry(userDetailsDto.getCountry());
-//        user.setMode(userDetailsDto.getMode());        
-//
-//        final User updatedUser = userRepository.save(user);
-//        return ResponseEntity.ok(updatedUser);
-//    }
 }

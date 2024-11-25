@@ -147,21 +147,21 @@ public class BookController {
     }
     
 
- // get book base on intrests
-    @GetMapping("/intrests/{intrest}")
-    public ResponseEntity<List<Book>> getBookByIntrests(@PathVariable String intrest){
-    	
-    	try {
-    	    List<Book> books = bookRepository.findBooksByIntrestName(intrest);
-    	    if (books.isEmpty()) {
-    	        return new ResponseEntity<>(HttpStatus.NOT_FOUND);
-    	    } else {
-    	        return new ResponseEntity<>(books, HttpStatus.OK);
-    	    }
-    	} catch (Exception e) {
-    	    return new ResponseEntity<>( HttpStatus.INTERNAL_SERVER_ERROR);
-    	}
-
-    }
+// // get book base on intrests
+//    @GetMapping("/intrests/{intrest}")
+//    public ResponseEntity<List<Book>> getBookByIntrests(@PathVariable String intrest){
+//    	
+//    	try {
+//    	    List<Book> books = bookRepository.findBooksByIntrestName(intrest);
+//    	    if (books.isEmpty()) {
+//    	        return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+//    	    } else {
+//    	        return new ResponseEntity<>(books, HttpStatus.OK);
+//    	    }
+//    	} catch (Exception e) {
+//    	    return new ResponseEntity<>( HttpStatus.INTERNAL_SERVER_ERROR);
+//    	}
+//
+//    }
 
 }

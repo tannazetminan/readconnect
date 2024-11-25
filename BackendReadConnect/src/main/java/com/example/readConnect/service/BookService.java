@@ -65,13 +65,5 @@ public class BookService {
         book.setRatingCount(book.getRatingCount() + 1);
         return bookRepository.save(book);
     }
-    
-//    @Transactional
-//    public Book addRating(Long bookId, double rating) {
-//        Book book = bookRepository.findById(bookId).orElseThrow(() -> new RuntimeException("Book not found."));
-//        book.setTotalRatingScore(book.getTotalRatingScore() + rating);
-//        book.setRatingCount(book.getRatingCount() + 1);
-//        bookRepository.save(book);
-//        return book;
-//    }
+
 }

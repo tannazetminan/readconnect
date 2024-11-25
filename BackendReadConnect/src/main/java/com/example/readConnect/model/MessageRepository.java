@@ -23,8 +23,4 @@ public interface MessageRepository extends JpaRepository<Message, Long> {
 			+ "UNION SELECT DISTINCT m.sender FROM Message m WHERE m.receiver.id = :userId")
 	List<User> findDistinctUsersInConversation(@Param("userId") Long userId);
 
-//  List<Message> findByUser(User user);
-
-//	List<Message> findByUserAndUser2(User user, User user2);
-
 }
