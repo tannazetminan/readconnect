@@ -107,7 +107,7 @@ export default {
 .container-login {
   display: flex;
   justify-content: center;
-  margin-top: 100px;
+  padding-top: 50px;
 }
 
 .img-login {
@@ -117,6 +117,8 @@ export default {
   height: auto;
   max-height: min-content;
   border-radius: 25px;
+  flex-shrink: -5;
+  max-width: 1000px;
 }
 
 form {
@@ -191,5 +193,29 @@ button {
   font-weight: bold;
   text-align: center;
   margin-left: 2rem;
+}
+
+@media (max-width: 1000px) {
+  .img-login{
+    visibility: hidden;
+    width: 0%;
+    display: block;
+  }
+  .login-form {
+  display: grid;
+  align-items: center;
+  width: 90%;
+  margin: 0px;
+  padding: 0%;
+}
+.container-form {
+  width: 100%;
+  text-align: center;
+  padding: 0%;
+}
+.container-login {
+  display: block;
+  padding: 0;
+}
 }
 </style>

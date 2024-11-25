@@ -172,7 +172,7 @@ export default {
 .container-singup {
   display: flex;
   justify-content: center;
-  margin-top: 100px;
+  padding-top: 50px;
 }
 
 .img-signup {
@@ -183,6 +183,7 @@ export default {
   max-height: min-content;
   border-radius: 25px;
   max-height: 700px;
+  max-width: 1000px;
 }
 
 .signup-form {
@@ -268,7 +269,6 @@ button {
   color: white;
 }
 
-
 .container-grettings {
   margin-top: 10px;
   display: inline-block;
@@ -284,5 +284,29 @@ button {
   margin: auto;
   font-size: 0.9em;
   color: #e27713;
+}
+
+@media (max-width: 1000px) {
+  .img-signup{
+    visibility: hidden;
+    width: 0%;
+    display: block;
+  }
+  .signup-form {
+  display: grid;
+  align-items: center;
+  width: 90%;
+  margin: 0px;
+  padding: 0%;
+}
+.container-form {
+  width: 100%;
+  text-align: center;
+  padding: 0%;
+}
+.container-singup {
+  display: block;
+  padding: 0;
+}
 }
 </style>

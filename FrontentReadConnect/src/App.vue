@@ -1,10 +1,7 @@
 <template>
   <div id="app">
-    <div>
-      <NavBar />
-      <router-view />
-    </div>
-
+      <NavBar style="margin-top:0 ; top: 0%; position: fixed;"/>
+      <router-view style="margin-top: 100px;"/>
   </div>
 </template>
 

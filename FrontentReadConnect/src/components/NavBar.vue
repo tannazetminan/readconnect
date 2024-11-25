@@ -3,10 +3,16 @@
     <nav class="navbar">
       <div class="container">
         <router-link to="/" class="brand">
-          <h2 class="text-2xl font-semibold">Read Connect</h2>
+          <h2 class="text-2xl font-semibold">ReadConnect</h2>
         </router-link>
 
-        <ul class="nav-links">
+        <!-- Hamburger Menu for Small Screens -->
+        <div class="menu-toggle" @click="toggleMenu">
+          ☰
+        </div>
+
+        <!-- Navigation Links -->
+        <ul class="nav-links" :class="{ active: isMenuOpen }">
           <li>
             <router-link to="/" class="nav-link">Home</router-link>
           </li>
@@ -26,7 +32,7 @@
             <router-link to="/login" class="nav-link">Login</router-link>
           </li>
           <li v-if="!isLoggedIn">
-            <router-link to="/signup" class="nav-link">Sign up</router-link>
+            <router-link to="/signup" class="nav-link">SignUp</router-link>
           </li>
           <li v-if="isLoggedIn">
             <router-link to="/" class="nav-link"><a href="#" @click="logout">Logout</a></router-link>
@@ -37,6 +43,7 @@
   </div>
 </template>
 
+
 <script>
 export default {
   name: "navBar",
@@ -45,49 +52,48 @@ export default {
     return {
       isLoggedIn: false,
       userType: null,
+      isMenuOpen: false, // Toggle menu state
     };
   },
 
   methods: {
     logout() {
-      localStorage.removeItem('token');
-      localStorage.removeItem('userId');
-      localStorage.removeItem('workerId');
+      localStorage.removeItem("token");
+      localStorage.removeItem("userId");
+      localStorage.removeItem("workerId");
       this.isLoggedIn = false;
-      this.$router.push('/');
+      this.$router.push("/");
     },
     chekUserType() {
-      this.userType = localStorage.getItem('userType');
-      // console.log("user type" + this.userType)
-    }
+      this.userType = localStorage.getItem("userType");
+    },
+    toggleMenu() {
+      this.isMenuOpen = !this.isMenuOpen;
+    },
   },
 
   mounted() {
     // Check if token exists in local storage
-    if (localStorage.getItem('token')) {
+    if (localStorage.getItem("token")) {
       this.isLoggedIn = true;
       this.chekUserType();
     }
   },
-
-
 };
 </script>
 
 
+
 <style scoped>
 .nav-container {
-  /* background-color: #18143a; */
   background-color: #1f1f25;
   margin: 0;
-  position: relative;
+  position: fixed;
   width: 100%;
   height: 100px;
-  opacity: 100%;
-  margin: 0;
 }
 
-h2.text-2xl{
+h2.text-2xl {
   font-size: 2rem;
 }
 
@@ -115,9 +121,11 @@ h2.text-2xl{
   list-style: none;
   display: flex;
   align-items: center;
+  transition: max-height 0.3s ease-out;
 }
 
-.nav-link , a {
+.nav-link,
+a {
   text-decoration: none;
   color: #ecebf8;
   margin-left: 1rem;
@@ -130,7 +138,52 @@ h2.text-2xl{
   color: #e27713;
 }
 
-.router-link-active , a:active {
+.router-link-active,
+a:active {
   color: #e27713;
 }
+
+/* Hamburger Menu Icon */
+.menu-toggle {
+  display: none;
+  font-size: 1.5rem;
+  color: #e27713;
+  cursor: pointer;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .nav-links {
+    flex-direction: column;
+    align-items: flex-start;
+    background-color: #1f1f25;
+    position: absolute;
+    top: 100%;
+    left: 0;
+    right: 0;
+    overflow: hidden;
+    max-height: 0;
+    padding: 0;
+    border-top: 1px solid #ecebf8;
+  }
+
+  .nav-links.active {
+    max-height: 200px; 
+    padding: 1rem;
+  }
+
+  .nav-link {
+    margin: 0.5rem 0;
+    font-size: 1.2rem;
+  }
+
+  .menu-toggle {
+    display: block;
+  }
+
+  .container {
+    justify-content: space-between;
+  }
+}
+
 </style>
