@@ -3,7 +3,7 @@
     <nav class="navbar">
       <div class="container">
         <router-link to="/" class="brand">
-          <span class="text-2xl font-semibold">Read Connect</span>
+          <h2 class="text-2xl font-semibold">Read Connect</h2>
         </router-link>
 
         <ul class="nav-links">
@@ -70,23 +70,25 @@ export default {
     }
   },
 
-  // watch: {
-  //   if (newLogin) {
-  //     console.log("ddddddddddddddddddddddddddd")
 
-  //     localStorage.setItem('newLogin', false);
-  //     console.log(newLogin)
-  //     window.location.reload();
-  //   }
-  // }
 };
 </script>
 
 
 <style scoped>
 .nav-container {
-  background-color: #18143ada;
+  /* background-color: #18143a; */
+  background-color: #1f1f25;
   margin: 0;
+  position: relative;
+  width: 100%;
+  height: 100px;
+  opacity: 100%;
+  margin: 0;
+}
+
+h2.text-2xl{
+  font-size: 2rem;
 }
 
 .navbar {

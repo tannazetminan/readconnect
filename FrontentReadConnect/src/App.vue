@@ -25,12 +25,10 @@ export default {
 #app {
   margin: 0;
 }
-body{
-  font-family: Verdana, Geneva, Tahoma, sans-serif;
-  font-size: 12px;
-}
 *{
   box-sizing: border-box;
+  font-size: 15px;
+  font-family: Verdana, Geneva, Tahoma, sans-serif;
 }
 
 </style>

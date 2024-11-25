@@ -1,5 +1,7 @@
 package com.example.readConnect.model;
 
+import java.time.LocalDateTime;
+
 import jakarta.persistence.Lob;
 
 public class BookCreateDto {
@@ -12,6 +14,7 @@ public class BookCreateDto {
     private String location;  
     private String category;
     private String description;
+    private LocalDateTime createDate;
 
     
     //getters and setters
@@ -56,5 +59,12 @@ public class BookCreateDto {
 	}
 	public void setDescription(String description) {
 		this.description = description;
+	}
+	public LocalDateTime getCreateDate() {
+		return createDate;
+	}
+
+	public void setCreateDate(LocalDateTime createDate) {
+		this.createDate = createDate;
 	}
 }

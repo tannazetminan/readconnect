@@ -1,5 +1,6 @@
 package com.example.readConnect.model;
 
+import java.time.LocalDateTime;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -29,8 +30,6 @@ public class Book {
 	@JsonManagedReference
     private User writer;
 	
-//    @OneToMany(mappedBy = "book", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-//    private Set<Intrest> intrests = new HashSet<>();
     
     private String description;
 	private String category;
@@ -41,6 +40,8 @@ public class Book {
     private double totalRatingScore;
     private int ratingCount;
     private int soldNum;
+    private LocalDateTime createDate;
+
     
     @Lob
     private byte[] image;
@@ -49,7 +50,29 @@ public class Book {
     // Constructors
     public Book() {	}
 
-    public Book(User writer, String description, String category, String title, String author, String isbn, byte[] image) {
+
+    
+    public Book(User writer, String description, String category, String title, String author, String isbn,
+			String location, double totalRatingScore, int ratingCount, int soldNum, LocalDateTime createDate, byte[] image) {
+		super();
+		this.writer = writer;
+		this.description = description;
+		this.category = category;
+		this.title = title;
+		this.author = author;
+		this.isbn = isbn;
+		this.location = location;
+		this.totalRatingScore = totalRatingScore;
+		this.ratingCount = ratingCount;
+		this.soldNum = soldNum;
+		this.createDate = createDate;
+		this.image = image;
+	}
+
+
+
+	public Book(User writer, String description, String category, String title, String author, String isbn, 
+    		LocalDateTime createDate, byte[] image) {
 		super();
 		this.description = description;
 		this.writer = writer;
@@ -58,9 +81,10 @@ public class Book {
 		this.author = author;
 		this.isbn = isbn;
 		this.category = category;
+		this.createDate = createDate;
 	}
-    public Book(User writer,  String description, String category, String title, String author, String isbn, String location,
-			  byte[] image) {
+    public Book(User writer,  String description, String category, String title, String author, String isbn,
+    		String location, LocalDateTime createDate, byte[] image) {
 		super();
 		this.description = description;
 		this.writer = writer;
@@ -70,9 +94,10 @@ public class Book {
 		this.isbn = isbn;
 		this.location = location;
 		this.category = category;
+		this.createDate = createDate;
 	}
     public Book(User writer, String category, String title, String author, String isbn, String location,
-			double averageRating, int totalRatings, int soldNum,  byte[] image) {
+			double averageRating, int totalRatings, int soldNum, LocalDateTime createDate, byte[] image) {
 		super();
 		this.writer = writer;
 		this.image = image;
@@ -84,32 +109,9 @@ public class Book {
 		this.ratingCount = totalRatings;
 		this.soldNum = soldNum;
 		this.category = category;
+		this.createDate = createDate;
 	}
 
-//	public Book(User writer, Set<Intrest> intrests,  String title, String author, String isbn, byte[] image) {
-//		this.writer = writer;
-//		this.intrests = intrests;
-//		this.image = image;
-//		this.title = title;
-//		this.author = author;
-//		this.isbn = isbn;
-//	}
-//
-//
-//	public Book(User writer, Set<Intrest> intrests, byte[] image, String title, String author, String isbn,
-//			String location, double averageRating, int totalRatings, int soldNum) {
-//		this.writer = writer;
-//		this.intrests = intrests;
-//		this.image = image;
-//		this.title = title;
-//		this.author = author;
-//		this.isbn = isbn;
-//		this.location = location;
-//		this.averageRating = averageRating;
-//		this.totalRatings = totalRatings;
-//		this.soldNum = soldNum;
-//	}    
-    
 
 	// Getters and Setters
 	public Long getId() {
@@ -191,14 +193,14 @@ public class Book {
 		this.description = description;
 	}
 	
+	public LocalDateTime getCreateDate() {
+		return createDate;
+	}
 
-//	public Set<Intrest> getIntrests() {
-//		return intrests;
-//	}
-//	public void setIntrests(Set<Intrest> intrests) {
-//		this.intrests = intrests;
-//	}
-	
+	public void setCreateDate(LocalDateTime createDate) {
+		this.createDate = createDate;
+	}
+
 	//methods
 	public double calculateAverageRating() {
 	    return (ratingCount > 0) ? totalRatingScore / ratingCount : 0;

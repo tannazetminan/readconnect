@@ -40,20 +40,28 @@
         <div style="display: block; float: left;">
           <p class="desc-book"><span style="font-weight: bold;">Title: </span>{{ book.title }} </p>
           <p class="desc-book">Author: {{ book.author }} </p>
-          <p class="desc-book">category: {{ book.category }} </p>
-          <p class="desc-book">Description: {{ book.description }}</p>
           <p class="desc-book">ISBN: {{ book.isbn }}</p>
           <p class="desc-book">Location: {{ book.location }}</p>
+          <p class="desc-book">Description: {{ book.description }}</p>
+          <p class="desc-book">category: {{ book.category }} </p>
+          <p class="desc-book" style="margin-top: -12px; margin-bottom: 10px;">
+            <!-- <div class="rating-stars"> -->
+              <span v-for="star in 5" :key="star" 
+                    :class="['star', star <= (  book.totalRatingScore /   book.ratingCount  ) ? 'filled' : '']" >
+                  ★
+              </span>
+          <!-- </div>  -->
+         </p> 
         </div>
         <div style="display: block; float: right;">
           <img v-if="book.image" :src="getImageSrc(book.image)" alt="Book Image" class="bookImg" />
-          <img v-else src="../../public/images/book.jpg" alt="Book Image" class="bookImg" />
+          <img v-else :src="getRandomBookImage()" alt="Book Image" class="bookImg" />
         </div>
-        <p class="desc-book">
+        <!-- <p class="desc-book">
           <star-rating v-model:rating="book.rating" star-size="35" show-rating=False animate=true
             @update:rating="setRating(book.id, $event)">
           </star-rating>
-        </p>
+        </p> -->
       </div>
     </div>
 
@@ -61,20 +69,21 @@
 
   <!-- if hidden profile-->
   <dv v-else>
-    <h2>This User Is hidden!</h2>
+    <h1 class="hiddenUser">This User's profile Mode Is hidden!</h1>
   </dv>
 </template>
 
 <script>
 import FetchDataServices from '../services/FetchDataService'
-import StarRating from 'vue-star-rating';
+import BookService from '@/services/BookService';
+// import StarRating from 'vue-star-rating';
 
 export default {
   name: "UserDisplay",
 
-  components: {
-    StarRating,
-  },
+  // components: {
+  //   StarRating,
+  // },
 
   data() {
     return {
@@ -121,7 +130,7 @@ export default {
 
     //showing books written by this user
     fetchBooks(id) {
-      FetchDataServices.getBookByUserId(id)
+      BookService.getBookByUserId(id)
         .then(response => {
           this.books = response.data;
         })
@@ -134,6 +143,10 @@ export default {
     },
     getImageSrc(image) {
       return `data:image/jpg;base64,${image}`;
+    },
+    getRandomBookImage() {
+      const randomIndex = Math.floor(Math.random() * 6) + 1; // Generate a number between 1 and 6
+      return `../images/book${randomIndex}.jpg`; // Construct the image path
     },
 
     //going to message page carring reciverId
@@ -159,6 +172,8 @@ export default {
     const DisplayuserId = this.$route.params.userId;
     if (DisplayuserId) {
       this.retrieveUser(DisplayuserId);
+      this.fetchBooks(DisplayuserId);
+
     } else {
       console.error('DisplayuserId is undefined');
       this.message = "NA"
@@ -169,25 +184,26 @@ export default {
 
 <style scoped>
 .container-cards {
-  width: 95%;
+  max-width: 1400px;
   margin: auto;
   display: flex;
   font-size: 1rem;
 }
 
-.profile {
-  display: block;
-  margin-top: 25px;
-  height: 150px;
-  width: 150px;
+.rating-stars {
+    display: flex;
+    gap: 8px;
+    margin-top: 10px;
 }
 
-.cards-description {
-  text-align: center;
-  width: 20%;
-  height: 850px;
-  align-items: flex-start;
-  border-radius: 0.5rem;
+.star {
+    font-size: 1.75rem;
+    color: #ddd;
+    transition: color 0.3s;
+}
+
+.star.filled {
+    color: #ff9800;
 }
 
 .book-container {
@@ -195,13 +211,12 @@ export default {
   text-align: left;
   margin-left: 20px;
   margin-bottom: 20px;
-  color: rgb(21, 80, 29);
+  color: #ff7b00;
 }
 
 .card-books {
   width: 70%;
   text-align: center;
-  margin-left: 100px;
   margin-top: 20px;
 }
 
@@ -211,7 +226,7 @@ export default {
   width: 80%;
   border-radius: 0.5rem;
   text-align: left;
-  background-color: rgb(210, 219, 224);
+  background-color: #e0e0e059;
   padding: 10px;
   clear: both;
   height: 250px;
@@ -226,42 +241,6 @@ export default {
   align-items: flex-start;
 }
 
-.personal-data {
-  background-color: rgb(230, 239, 247);
-  border-radius: 0.5rem;
-  padding: 5px;
-  margin-top: 15px;
-}
-
-.data-description {
-  margin-bottom: 15px;
-  padding: 2px;
-}
-
-.setting {
-  height: 350px;
-  margin-bottom: 50px;
-  background-color: rgb(230, 239, 247);
-  border-radius: 0.5rem;
-  margin-top: 15px;
-  padding: 5px;
-  text-align: left;
-  font-size: 0.93rem;
-}
-
-button {
-  padding: 0.5rem 1rem;
-  background-color: #e27713;
-  color: black;
-  border: none;
-  border-radius: 4px;
-  cursor: pointer;
-  margin: 10px auto 0 auto;
-  font-weight: bold;
-  margin-left: auto;
-  margin-right: auto;
-}
-
 h3 {
   margin-top: 15px;
   width: 90%;
@@ -272,6 +251,10 @@ h3 {
   border-radius: 10px;
   width: 200px;
   margin-left: auto;
+  height: 230px;
+  object-fit: cover;
+  margin-bottom: 10px;
+  border-radius: 5px;
 }
 
 .desc-books1 {
@@ -280,8 +263,67 @@ h3 {
   color: rgb(85, 80, 76)
 }
 
-
 .error-message {
   color: white;
+}
+.profile {
+  display: block;
+  margin: 20px auto;
+  height: 250px;
+  width: 250px;
+  border-radius: 50%;
+  border: 3px solid #5c7b97;
+}
+
+.personal-data {
+  background-color: #f8f9fb;
+  border-radius: 0.5rem;
+  padding: 15px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  margin: 10px;
+  margin-bottom: 25px;
+  text-align: center;
+}
+
+.container-profile{
+  padding: 0;
+}
+
+.cards-description {
+  width: 30%;
+  align-items: flex-start;
+  border-radius: 0.5rem;
+  min-width: 300px;
+
+}
+
+.data-description {
+  margin: 10px 0;
+  color: #333;
+  text-align: center;
+  font-weight: bold;
+}
+
+.setting {
+  background-color: #f8f9fb;
+  border-radius: 0.5rem;
+  padding: 15px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  margin: 10px;
+}
+button {
+  padding: 0.5rem 1rem;
+  background-color: #ff8800;
+  color: white;
+  border-radius: 10px;
+  cursor: pointer;
+  margin: 10px auto 0 auto;
+  border: #5c7b97;
+}
+
+.hiddenUser{
+  width: 100%;
+  text-align: center;
+  padding: 50px;
 }
 </style>

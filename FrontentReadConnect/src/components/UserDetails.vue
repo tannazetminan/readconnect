@@ -92,7 +92,7 @@
         </div>
         <div style="display: block; float: right;">
           <img v-if="book.image" :src="getImageSrc(book.image)" alt="Book Image" class="bookImg" />
-          <img v-else src="images/book.jpg" alt="Book Image" class="bookImg" />
+          <img v-else :src="getRandomBookImage()" alt="Book Image" class="bookImg" />
         </div>
         <!-- <p class="desc-book">
           <star-rating v-model:rating="book.rating" star-size="35" show-rating=False animate=true
@@ -238,6 +238,8 @@ export default {
       formData.append('location', this.newBook.location);
       formData.append('category', this.newBook.category);
       formData.append('description', this.newBook.description);
+      const createDate = new Date().toISOString().split("Z")[0];
+      formData.append("createDate", createDate);
 
       if (this.newBook.image) {
         formData.append('image', this.newBook.image);
@@ -251,14 +253,17 @@ export default {
         })
         .catch(error => {
           console.error(error.response?.data || error);
-          this.errorMessage = error.response?.data?.message || "An error occurred";
+          this.errorMessage = error.response?.data?.message || "";
         });
     },
     onFileChange(event) {
       const file = event.target.files[0];
       this.newBook.image = file;
     },
-
+    formatTimestamp(timestamp) {
+        const date = new Date(timestamp);
+        return date.toLocaleString(); 
+    },
 
     //showing books written by this user
     fetchBooks(id) {
@@ -275,6 +280,10 @@ export default {
     },
     getImageSrc(image) {
       return `data:image/jpg;base64,${image}`;
+    },
+    getRandomBookImage() {
+      const randomIndex = Math.floor(Math.random() * 6) + 1; // Generate a number between 1 and 6
+      return `images/book${randomIndex}.jpg`; // Construct the image path
     },
 
     setRating(bookId, rating) {
@@ -342,7 +351,6 @@ export default {
   align-items: flex-start;
   border-radius: 0.5rem;
   min-width: 300px;
-
 }
 
 .data-description {
@@ -427,7 +435,7 @@ button:hover {
   align-items: flex-start;
   padding: 15px;
   margin: 15px 0;
-  background-color: #e9eff6;
+  background-color: #e0e0e059;
   border-radius: 0.5rem;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
@@ -440,10 +448,14 @@ button:hover {
 }
 
 .bookImg {
-  height: 150px;
-  width: auto;
-  border-radius: 0.5rem;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  border-radius: 10px;
+  width: 200px;
+  margin-left: auto;
+  height: 230px;
+  object-fit: cover;
+  margin-bottom: 10px;
+  border-radius: 5px;
 }
 
 .container-form {

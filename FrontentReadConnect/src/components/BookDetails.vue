@@ -31,6 +31,8 @@
                     </div>                     
                 </div>
             </div>
+            <p>Post Creation Date: {{ formatTimestamp(book.createDate)  }}</p>
+
         </div>
         <!-- Comments Section -->
         <div class="card-pf">

@@ -1,6 +1,6 @@
 <template>
-  <div class="container-book">
-    <!-- <div class="categories">
+    <div class="forum-container">
+      <!-- <div class="categories">
       <span>General</span>
       <span>Science</span>
       <span>Electrical </span>
@@ -8,47 +8,100 @@
       <span>Psychology </span>
     </div> -->
 
-    <div>
-      <h1 class="title">List of Books</h1>
-    </div>
-    <div class="cards">
-      <div v-for="book in books" :key="book.id" class="card-book">
-        <p>
-          <img v-if="book.image" :src="getImageSrc(book.image)" alt="Book Image" class="profile" />
-          <img v-else src="images/book.jpg" alt="Book Image" class="profile" />
-        </p>
-        <p>Title: <span style="font-size: large;">{{ book.title }}</span></p>
-        <p>Author: <span style="font-weight: bold;">{{ book.author }}</span></p>
-        <p>Post Creator: {{ book.writer.username }}</p>
-        <p>ISBN: {{ book.isbn }}</p>
-        <!-- <p style="text-align: left; margin-left: 10px;">
-          <img src="../../public/images/phone.png" width="25px" height="25px" style="margin-bottom: -7px;" /> {{
-            book.phone }}<br /><br />
-          <img src="../../public/images/email.png" width="30px" height="30px"
-            style="margin-bottom: -10px; padding-right: 2px; margin-left: -2px;" />{{ book.email }}
-        </p> -->
+     <!-- Recommended Books Section -->
+     <section class="recommended-section">
+      <h2 class="section-title">Highest-Rated Books</h2>
+      <div class="recommended-books">
+        <div v-for="book in recommendedBooks" :key="book.id" class="recommended-book">
+          <img
+            :src="book.image ? `data:image/jpeg;base64,${book.image}` : getRandomBookImage()"
+            alt="Book cover"
+            class="book-cover"
+          />
+          <div class="book-details">
+            <h3 class="book-title" @click="goToBookDetails(book.id)">
+              {{ book.title }}
+            </h3>
+            <p class="book-meta">
+              <span>Author:</span> {{ book.author }}
+            </p>
+            <p class="book-meta">
+              <span>Category:</span> {{ book.category || 'Uncategorized' }}
+            </p>
+            <p  style="text-align: center;">
+              <span v-for="star in 5" :key="star" 
+                :class="['star', star <= (  book.totalRatingScore /   book.ratingCount  ) ? 'filled' : '']" 
+                >
+                  ★
+              </span>
+            </p> 
+          </div>
+        </div>
+      </div>
+    </section>
 
-        <!-- <div class="rating-container">
-            <img src="images/star.png" class="rating" /><span>{{ book.averageRating }}</span>
-          </div> -->
-        <div v-if="book.averageRating === 5">
-          <img src="images/5star.png" class="rating" />
-        </div>
-        <div v-if="book.averageRating === 4">
-          <img src="images/4star.png" class="rating" />
-        </div>
-        <div v-if="book.averageRating === 3">
-          <img src="images/3star.png" class="rating" />
-        </div>
-        <div v-if="book.averageRating === 2">
-          <img src="images/2star.png" class="rating" />
-        </div>
-        <div v-if="book.averageRating === 1">
-          <img src="images/1star.png" class="rating" />
-        </div>
-        <button type="submit" class="button-profile" @click="sendData(book.id)">See more</button>
+
+    <!-- Search and Categories -->
+    <div class="forum-controls">
+      <!-- Forum Header -->
+      <header class="forum-header">
+        <!-- <h1 class="forum-title">Book Forum</h1> -->
+        <p class="forum-subtitle">Search Your Favorit Book In ReadConnect Platform</p>
+      </header>
+      <input
+        type="text"
+        v-model="searchQuery"
+        @input="searchBooks"
+        placeholder="Search books by title, author, or category..."
+        class="search-bar"
+      />
+      <div class="forum-categories">
+        <span
+          v-for="category in categories"
+          :key="category"
+          class="category-tag"
+          :class="{ active: selectedCategory === category }"
+          @click="filterByCategory(category)"
+        >
+          {{ category }}
+        </span>
       </div>
     </div>
+
+   
+
+    <!-- Forum Threads Section -->
+    <section class="forum-threads">
+      <h2 class="section-title2">Related Books</h2>
+      <div v-for="book in filteredBooks" :key="book.id" class="thread">
+        <div class="thread-details">
+          <div class="thread-title" @click="goToBookDetails(book.id)">
+            <strong>{{ book.title }}</strong>
+          </div>
+          <div class="thread-meta">
+            <p><span>Author:</span> {{ book.author }}</p>
+            <p><span>Posted by:</span> {{ book.writer.username }}</p>
+            <p><span>Category:</span> {{ book.category || 'Uncategorized' }}</p>
+            <div class="rating-stars">
+               <span v-for="star in 5" :key="star" 
+                  :class="['star', star <= (  book.totalRatingScore /   book.ratingCount  ) ? 'filled' : '']" 
+                  >
+                    ★
+                </span>
+            </div>                     
+          </div>
+        </div>
+        <div class="thread-stats">
+          <!-- <p><span>Last Engagement:</span> {{ formatDate(book.lastEngagement) }}</p>
+          <p><span>Comments:</span> {{ book.commentsCount || 0 }}</p> -->
+          <img
+            :src="book.image ? `data:image/jpeg;base64,${book.image}` : getRandomBookImage()"
+            alt="Book cover"
+            class="book-cover"
+          />
+        </div>
+      </div>
+    </section>
   </div>
 
 </template>
@@ -65,34 +118,69 @@ export default {
   data() {
     return {
       books: [],
-      id: 1
-
-    }
+      recommendedBooks: [],
+      categories: ["General", "Science", "Historical", "Psychology", "Literature"],
+      filteredBooks: [],
+      selectedCategory: "General",
+      searchQuery: "",
+    };
   },
-
   methods: {
+    // Fetch all books from the server
     fetchBooks() {
       BookService.getAllBooks()
-        .then(response => {
-          this.books = response.data
-          console.log(response)
+        .then((response) => {
+          this.books = response.data;
+          this.filteredBooks = this.books; // Initially show all books
+          this.fetchRecommendedBooks(); // Populate recommended books
         })
-        .catch(error => {
-          if (error.response) {
-            console.log(error.response.data);
-            console.log(error.response.status);
-          }
+        .catch((error) => {
+          console.error(error);
         });
     },
-    getImageSrc(image) {
-      return `data:image/jpg;base64,${image}`;
+
+    // Fetch recommended books (highest-rated or newest)
+    fetchRecommendedBooks() {
+      this.recommendedBooks = this.books
+      .filter((book) => book.ratingCount > 0) // Exclude books with 0 ratings
+        .sort((a, b) => b.totalRatingScore / b.ratingCount - a.totalRatingScore / a.ratingCount)
+        .slice(0, 20); // Top 20 highest-rated books
     },
 
-    //going to bookdetails page carring the bookId
-    sendData(bookId){         
-        console.log("book id", bookId)
-        this.$router.push({name:"BookDetails", params: { bookId: bookId }})
-    }
+    // Filter books by category
+    filterByCategory(category) {
+      this.selectedCategory = category;
+      this.filteredBooks = this.books.filter((book) => book.category === category);
+    },
+
+    // Search books by query
+    searchBooks() {
+      const query = this.searchQuery.toLowerCase();
+      this.filteredBooks = this.books.filter((book) => {
+        return (
+          book.title.toLowerCase().includes(query) ||
+          book.author.toLowerCase().includes(query) ||
+          book.category.toLowerCase().includes(query)
+        );
+      });
+    },
+
+    // Navigate to book details
+    goToBookDetails(bookId) {
+      this.$router.push({ name: "BookDetails", params: { bookId: bookId } });
+    },
+
+    // Format dates for "Last Engagement"
+    formatDate(date) {
+      if (!date) return "No engagement yet";
+      const engagementDate = new Date(date);
+      return engagementDate.toLocaleString(); // Adjust format based on locale
+    },
+    getRandomBookImage() {
+      const randomIndex = Math.floor(Math.random() * 6) + 1; // Generate a number between 1 and 6
+      return `images/book${randomIndex}.jpg`; // Construct the image path
+    },
+
   },
   mounted() {
     this.fetchBooks();
@@ -102,96 +190,199 @@ export default {
 </script>
 
 <style>
-h1 {
-  font-size: 50px;
-  margin-left: 9rem;
-  color: rgb(1, 97, 1);
-  margin-top: 70px;
+.img_back{
+  width: 100%;
+  height: 840px;
 }
-
-
-.categories {
-  display: flex;
-  width: 80%;
-  margin-left: 10rem;
-  font-size: 20px;
-  font-weight: bold;
-  color: #e27713;
-}
-
-.categories span {
-  margin-right: 15px;
-}
-
-.cards {
+.forum-container {
+  max-width: 1400px;
   margin: auto;
+  padding: 20px;
+  font-family: Arial, sans-serif;
+  background-blend-mode: darken;
+  background-color: #e0e0e059;
+  background: blur(4px);
+}
+
+.forum-header {
   text-align: center;
-  width: 70%;
-  display: grid;
-  grid-gap: 10px;
-  margin-top: 10rem;
-  grid-template-columns: repeat(4, minmax(250px, 1fr));
-  text-align: center;
-
-
-}
-
-.card-book {
-  box-sizing: border-box;
-  border-radius: 0.5rem;
-  display: flex;
-  flex-direction: column;
-  text-align: center;
-  transition: transform 0.3s ease;
-  max-width: 98%;
-  font-weight: bold;
-  background-color: white;
-  margin-left: 20px;
-  border: 1px solid rgb(31, 142, 175);
-  line-height: 1;
-}
-
-.profile {
-  width: 100px;
-  height: 100px;
-  margin: auto;
-  margin-top: 15px;
-}
-
-.rating {
-  max-width: 110px;
-  height: 25px;
-  margin: auto;
-  margin-top: 15px;
-  margin-bottom: 15px;
-  display: inline
-}
-
-.rating-container img,
-.rating-container span {
-  display: inline-block;
-  margin-right: 5px;
-
-}
-
-.subtitle-book {
-  text-align: left;
   margin-bottom: 20px;
 }
 
-.button-profile {
-  display: inline-block;
-  padding: 0.5rem 1rem;
-  background-color: #e27713;
-  color: rgb(32, 20, 20);
-  width: 120px;
-  border: none;
-  border-radius: 4px;
+.forum-title {
+  font-size: 3rem;
+  color: #1f8eaf;
+}
+
+.forum-subtitle {
+  font-size: large;
+  color: #ff781e;
+  font-weight: bold;
+}
+
+.forum-controls {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-bottom: 50px;
+  margin-top: 50px;
+  background-color: #1f1f25f8;
+  border-radius: 10px;
+  padding: 50px;
+}
+
+.search-bar {
+  width: 80%;
+  padding: 10px;
+  border: 1px solid #ddd;
+  border-radius: 10px;
+  margin-bottom: 10px;
+  font-size: 1rem;
+}
+
+.forum-categories {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  margin-top: 10px;
+}
+
+.category-tag {
+  background-color: #e8f4fa;
+  border: 1px solid #ff781e;
+  padding: 10px 15px;
+  margin: 0 10px;
+  border-radius: 10px;
   cursor: pointer;
-  margin: auto;
+  color: #ff781e;
+  font-weight: bold;
+  transition: background-color 0.3s, color 0.3s;
+}
+
+.category-tag:hover {
+  background-color: #ff781e;
+  color: white;
+}
+
+.category-tag.active {
+  background-color: #ff781e;
+  color: white;
+}
+
+/* Recommended Books Section */
+.recommended-section {
+  margin-top: 20px;
+}
+
+.section-title {
+  font-size: 1.8rem;
+  color: #ff781e;
+  margin-bottom: 0px;
+  margin-top: 50px;
+}
+.section-title2{
+  /* color: #1f8eaf; */
+  color: #ff781e;
+  font-size: 1.8rem;
+  margin-bottom: 30px;
+  margin-top: 70px;
+}
+.recommended-books {
+  display: flex;
+  gap: 20px;
+  overflow-x: scroll;
+  padding: 30px 0;
+}
+
+.recommended-book {
+  flex: 0 0 200px;
+  border: 1px solid #ddd;
+  border-radius: 10px;
+  background-color: #1f1f25f8;
+  padding: 10px;
+  text-align: center;
+  width: 250px;
+  min-width: 255px;
+}
+
+.book-cover {
+  width: 100%;
+  height: 200px;
+  object-fit: cover;
+  margin-bottom: 10px;
+  border-radius: 5px;
+}
+
+.book-title {
+  font-size: 1rem;
+  color: #1f8eaf;
+  margin-bottom: 5px;
+  cursor: pointer;
+}
+
+.book-meta {
+  font-size: 0.8rem;
+  color: #ddd;
+}
+
+/* Forum Threads */
+.forum-threads {
+  margin-top: 50px;
+}
+
+.thread {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 15px;
+  border: 1px solid #ddd;
+  border-radius: 10px;
+  background-color: #fff;
   margin-bottom: 10px;
 }
-p{
-  font-weight: normal;
+
+.thread:hover {
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15);
+}
+
+.thread-details {
+  flex: 3;
+  margin-right: 20px;
+}
+
+.thread-title {
+  font-size: 1.2rem;
+  color: #1f8eaf;
+  cursor: pointer;
+}
+
+.thread-title:hover {
+  text-decoration: underline;
+}
+
+.thread-meta {
+  font-size: 0.9rem;
+  color: #555;
+}
+
+.thread-stats {
+  flex: 1;
+  text-align: right;
+}
+.rating-stars {
+    display: flex;
+    gap: 8px;
+    margin-top: 10px;
+}
+
+.star {
+    font-size: 1.75rem;
+    color: #ddd;
+    transition: color 0.3s;
+}
+
+.star.filled {
+    color: #ff9800;
 }
 </style>
+
