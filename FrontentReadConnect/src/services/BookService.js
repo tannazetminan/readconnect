@@ -32,6 +32,11 @@ class BookService {
         });
     }
 
+    getCommentsMetadata(bookId) {
+        return http.get(`/comments/metadata/${bookId}`); 
+    }
+      
+
     rateBook(bookId, rating, userId) {
         return http.post(`/books/${bookId}/rate`, null, {
             params: { userId, rating },

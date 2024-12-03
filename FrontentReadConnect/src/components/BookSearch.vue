@@ -6,7 +6,6 @@
     <div class="search-form">
       <input v-model="query" placeholder="Book title or keywords" />
       <input v-model="author" placeholder="Author" />
-      <input v-model="category" placeholder="Category" />
       <input v-model="publisher" placeholder="Publisher" />
       <select v-model="orderBy" class="sort-options">
         <option value="">Sort By</option>
@@ -14,44 +13,40 @@
         <option value="newest">Newest</option>
       </select>
       <button @click="fetchBooks">Search</button>
+      
       <!-- Category Filtering -->
       <div class="topics">
-        <button v-for="topic in topics" @click="fetchByTopic(topic)" :key="topic">{{ topic }}</button>
+        <button 
+          v-for="topic in topics" 
+          @click="toggleCategory(topic)" 
+          :key="topic" 
+          :class="{ selected: selectedCategories.includes(topic) }"
+        >
+          {{ topic }}
+        </button>
       </div>
     </div>
 
     <!-- Book Grid Layout -->
     <div v-if="books && books.items && books.items.length" class="book-grid">
       <div class="book-card" v-for="book in books.items" :key="book.id">
-        <!-- Book Cover -->
-        <!-- <img :src="book.volumeInfo.imageLinks?.thumbnail" alt="Book cover" /> -->
         <img :src="book.volumeInfo.imageLinks?.thumbnail || require('../../public/images/book.jpg')" alt="Book cover" style="max-height: 200px;"/>
-        <!-- Book Title -->
         <h3>{{ book.volumeInfo.title }}</h3>
-        <!-- Book Authors -->
         <p><b>Author:</b> {{ book.volumeInfo.authors?.join(', ') }}</p>
-        <!-- Publisher -->
         <p><b>Publisher:</b> {{ book.volumeInfo.publisher }}</p>
-        <!-- Publish Date -->
         <p><b>Published Date:</b> {{ book.volumeInfo.publishedDate }}</p>
-        <!-- Price -->
         <p>{{ book.saleInfo?.retailPrice?.amount }} {{ book.saleInfo?.retailPrice?.currencyCode }}</p>
-        <!-- Buy Link -->
         <a :href="book.saleInfo.buyLink" target="_blank"><b>Buy</b></a>
-        <!-- Book Summary -->
         <p class="description">{{ book.volumeInfo.description }}</p>
       </div>
-        <!-- Pagination -->
-        <div class="pagination" v-if="books">
+
+      <!-- Pagination -->
+      <div class="pagination" v-if="books">
         <button @click="prevPage" :disabled="startIndex === 0">Previous</button>
         <button @click="nextPage">Next</button>
       </div>
     </div>
   </div>
-
-
-
-
 </template>
 
 <script>
@@ -62,14 +57,13 @@ export default {
     return {
       query: '',
       author: '',
-      category: '',
       publisher: '',
       books: null,
-      startIndex: 0, // For pagination
-      maxResults: 12, // Max books per page
+      startIndex: 0,
+      maxResults: 12,
       orderBy: '',
       topics: ['General', 'Science', 'Historical', 'Psychology', 'Literature'],
-      intrest: '',
+      selectedCategories: [], // Holds selected categories
       user: {
         username: '',
         email: '',
@@ -77,58 +71,62 @@ export default {
         fullName: '',
         intrests: [],
       },
+      isLoggedIn: false, // Tracks if the user is logged in
     };
   },
   methods: {
     retrieveUser() {
-      let id = localStorage.getItem('userId');
-      let fullName;
-      this.fullName = localStorage.getItem('fullName');
-      console.log(fullName);
+      const id = localStorage.getItem('userId');
+      //const fullName = localStorage.getItem('fullName');
 
-      console.log('SID:' + id);
-      FetchDataServices.getUserById(id)
-        .then((response) => {
-          this.user = response.data;
-          console.log(this.user);
-          this.intrest = this.user.intrests;
-          this.fetchByTopic(this.intrest);
-        })
-        .catch((error) => {
-          console.log(error);
-        });
+      // console.log('SID:' + id);
+
+      if (id) {
+        FetchDataServices.getUserById(id)
+          .then((response) => {
+            this.user = response.data;
+            this.selectedCategories = [this.user.intrests]; // Set user interests as selected categories
+           // this.selectedCategories = Array.isArray(this.user.intrests) ? this.user.intrests : [];
+
+            console.log( this.selectedCategories);
+            console.log(id)
+            this.fetchBooks(); // Fetch books for user interests
+          })
+          .catch((error) => {
+            console.error('Error fetching user data:', error);
+          });
+      } else {
+        this.selectedCategories = ['General']; // Default category for guests
+        this.fetchBooks();
+      }
     },
 
     // Fetch books based on search query and advanced parameters
     async fetchBooks() {
       let searchQuery = this.query;
       if (this.author) searchQuery += `+inauthor:${this.author}`;
-      if (this.category) searchQuery += `+subject:${this.category}`;
       if (this.publisher) searchQuery += `+inpublisher:${this.publisher}`;
 
+      // Add multiple categories to the query
+      if (this.selectedCategories.length) {
+        const categoryQuery = this.selectedCategories.map(cat => `+subject:${cat}`).join('');
+        searchQuery += categoryQuery;
+      }
+
       const apiKey = process.env.VUE_APP_API_KEY;
-
-
       let queryString = `q=${searchQuery}&maxResults=${this.maxResults}&startIndex=${this.startIndex}&key=${apiKey}`;
 
-      // Append orderBy if selected
       if (this.orderBy) {
         queryString += `&orderBy=${this.orderBy}`;
       }
 
       try {
-        // Make the API request with pagination and sorting
         const response = await fetch(`https://www.googleapis.com/books/v1/volumes?${queryString}`);
         if (!response.ok) {
           throw new Error(`${response.status} ${response.statusText}`);
         }
         const data = await response.json();
-
-        if (data && data.items) {
-          this.books = data;
-        } else {
-          this.books = null;
-        }
+        this.books = data.items ? data : null;
       } catch (error) {
         if (error.message.includes('429')) {
           alert('You have reached the API request limit. Please try again later.');
@@ -137,11 +135,15 @@ export default {
         }
       }
     },
-    // Fetch books based on predefined topic/category
-    fetchByTopic(topic) {
-      this.category = topic;
-      this.startIndex = 0; // Reset to the first page when changing the topic
-      this.fetchBooks();
+
+    // Toggle selected category
+    toggleCategory(topic) {
+      if (this.selectedCategories.includes(topic)) {
+        this.selectedCategories = this.selectedCategories.filter(cat => cat !== topic);
+      } else {
+        this.selectedCategories.push(topic);
+      }
+      this.fetchBooks(); // Fetch books immediately when a category is toggled
     },
 
     // Pagination methods
@@ -158,20 +160,22 @@ export default {
   },
 
   mounted() {
-    let newLogin = localStorage.getItem('newLogin');
+    this.newLogin = localStorage.getItem('newLogin');
     this.retrieveUser();
-
-    if (newLogin === 'true') {
-      localStorage.setItem('newLogin', false);
-      // this.checklogin();
-    } else {
-      this.fetchByTopic("general");
-    }
   },
 };
 </script>
 
-<style scoped>
+
+
+
+<style>
+.topics button.selected {
+  background-color: #007bff;
+  color: white;
+  font-weight: bold;
+}
+
 /* Main container styling */
 .search-container {
   padding: 20px;

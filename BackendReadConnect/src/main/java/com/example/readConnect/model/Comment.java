@@ -31,8 +31,16 @@ public class Comment {
         this.content = content;
         this.timestamp = LocalDateTime.now();
     }
+   
+    public Comment(User user, Book book, String content, LocalDateTime timestamp) {
+		super();
+		this.user = user;
+		this.book = book;
+		this.content = content;
+		this.timestamp = timestamp;
+	}
 
-    // Getters and Setters   
+	// Getters and Setters   
 	public Long getId() {
 		return id;
 	}

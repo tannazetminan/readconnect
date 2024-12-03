@@ -103,17 +103,20 @@
       </div>
     </section>
   </div>
-
+  <FooterMenu />
 </template>
 
 
 
 <script>
 import BookService from "../services/BookService";
-
+import FooterMenu from './Footer.vue';
 
 export default {
   name: "BooksList",
+  components: {
+    FooterMenu
+  },
 
   data() {
     return {
@@ -202,6 +205,7 @@ export default {
   background-blend-mode: darken;
   background-color: #e0e0e059;
   background: blur(4px);
+  margin-top: 100px;
 }
 
 .forum-header {

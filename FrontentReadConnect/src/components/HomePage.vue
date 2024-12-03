@@ -36,35 +36,43 @@
     
     <!-- Forum Threads Section -->
     <section class="forum-threads">
-      <h2 class="section-title2">Latest Posts</h2>
-      <div v-for="book in filteredBooks.slice(0, 5)" :key="book.id" class="thread">
+      <h2 class="section-title2">Latest Comments of Books</h2>
+      <div v-for="book in filteredBooks.slice(0, 3)" :key="book.id" class="thread">
+        <div class="thread-img"><img
+            :src="book.image ? `data:image/jpeg;base64,${book.image}` : getRandomBookImage()"
+            alt="Book cover"
+            class="book-cover" style="max-height: 120px; max-width: 150px"
+          />
+          <!-- <img
+            :src="book.image ? `data:image/jpeg;base64,${book.image}` : 'images/book.jpg'"
+            alt="Book cover"
+            class="book-cover" style="max-height: 120px; max-width: 150px"
+          /> -->
+        </div>
         <div class="thread-details">
           <div class="thread-title" @click="goToBookDetails(book.id)">
             <strong>{{ book.title }}</strong>
           </div>
           <div class="thread-meta">
             <p><span>Author:</span> {{ book.author }}</p>
-            <p><span>Category:</span> {{ book.category || 'Uncategorized' }}</p>                  
+            <p><span>Category:</span> {{ book.category || 'Uncategorized' }}</p>
+            <p><span>Comments:</span> {{ book.commentsCount || 0 }}</p>
           </div>
         </div>
-         <div class="thread-stats">
-          <p><span>Posted by:</span> <span @click="sendData(book.writer.id)" class="postCreator">{{ book.writer.username }}</span></p>
-          
-
-          <p><span>Posted On:</span> {{formatTimestamp(book.createDate)  }}</p>
-          <!--<p><span>Last Engagement:</span> {{ formatDate(book.lastEngagement) }}</p>
-          <p><span>Comments:</span> {{ book.commentsCount || 0 }}</p> 
-          <img
-            :src="book.image ? `data:image/jpeg;base64,${book.image}` : 'images/book.jpg'"
-            alt="Book cover"
-            class="book-cover"
-          /> -->
+        <div class="thread-stats">
+        
+          <p v-if="book.writer.mode === false"><span>Post Creator: </span> 
+            <span @click="sendData(book.writer.id)" class="postCreator">{{ book.writer.username }}</span></p>
+          <p v-else><span>Post Creator: </span> 
+            <span @click="sendData(book.writer.id)" class="creator">{{ book.writer.username }}</span></p>
+          <p><span>Posted On:</span> {{ formatTimestamp(book.createDate) }}</p>
+          <p><span>Last Engagement:</span> {{ formatTimestamp(book.lastEngagement) }}</p>
         </div>
       </div>
     </section>
 
-        <!-- Recommended Books Section -->
-        <section class="recommended-section">
+    <!-- Recommended Books Section -->
+    <section class="recommended-section">
       <h2 class="section-title">Recommended Books</h2>
       <div class="recommended-books">
         <div v-for="book in recommendedBooks" :key="book.id" class="recommended-book">
@@ -87,23 +95,31 @@
             <p class="book-meta">
               <span v-for="star in 5" :key="star" 
                   :class="['star', star <= (  book.totalRatingScore /   book.ratingCount  ) ? 'filled' : '']" 
-                 >
+                >
                 ★
               </span>
             </p> 
+            <p><span>Comments:</span> {{ book.commentsCount || 0 }}</p>
           </div>
         </div>
       </div>
     </section>
-  </div>
 
+    
+  </div>
+  <FooterMenu />
 </template>
 
 <script>
 import BookService from "../services/BookService";
+import FooterMenu from './Footer.vue';
 
 export default {
   name: "BooksList",
+  components: {
+    FooterMenu
+  },
+
   data() {
     return {
       books: [],
@@ -115,15 +131,24 @@ export default {
     };
   },
   methods: {
-    // Fetch all books from the server
     fetchBooks() {
       BookService.getAllBooks()
-        .then((response) => {
+        .then(async (response) => {
           this.books = response.data;
-          this.books.sort((a, b) => new Date(b.createDate) - new Date(a.createDate));       
-          this.filteredBooks = this.books; // Initially show all books 
-          this.books.sort((a, b) => new Date(b.createDate) - new Date(a.createDate));       
-          this.fetchRecommendedBooks(); // Populate recommended books
+
+          // Fetch comments count and last engagement for each book
+          for (let book of this.books) {
+            const commentResponse = await BookService.getCommentsMetadata(book.id);
+            book.commentsCount = commentResponse.data.count;
+            book.lastEngagement = commentResponse.data.lastEngagement;
+          }
+
+          // Sort books by createDate
+         // this.books.sort((a, b) => new Date(b.createDate) - new Date(a.createDate));
+          this.books.sort((a, b) => new Date(b.lastEngagement) - new Date(a.lastEngagement));
+
+          this.filteredBooks = this.books;
+          this.fetchRecommendedBooks();
         })
         .catch((error) => {
           console.error(error);
@@ -198,6 +223,7 @@ export default {
   height: 600px;
   max-height: 600px;
   padding-top: 150px;
+  margin-top: 100px;
 }
 
 .forum-container {
@@ -340,6 +366,7 @@ input{
   border-radius: 10px;
   background-color: #fff;
   margin-bottom: 10px;
+  max-height: 150px;
 }
 
 .thread:hover {
@@ -365,9 +392,14 @@ input{
   font-size: 0.9rem;
   color: #555;
 }
+.thread-img{
+  margin-right: 20px;
+  max-width: 200px;
+  width: 200px;
+}
 
 .thread-stats {
-  flex: 1;
+  flex: 1.5;
   text-align: left;
 }
 .rating-stars {

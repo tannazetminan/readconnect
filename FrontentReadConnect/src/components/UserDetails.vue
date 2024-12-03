@@ -103,16 +103,22 @@
 
     </div>
   </div>
+  <FooterMenu />
+
 </template>
 
 <script>
 import FetchDataServices from '../services/FetchDataService';
 import BookService from "../services/BookService";
+import FooterMenu from './Footer.vue';
+
 // import StarRating from 'vue-star-rating';
 
 export default {
   name: "userDetails",
-
+  components: {
+    FooterMenu
+  },
   // components: {
   //   StarRating,
   // },
@@ -320,6 +326,7 @@ export default {
   flex-wrap: wrap;
   font-size: 1rem;
   gap: 20px;
+  margin-top: 100px;
 }
 
 /* Profile Section */

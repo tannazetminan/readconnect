@@ -6,7 +6,10 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import com.example.readConnect.model.*;
 
+import java.time.LocalDateTime;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/comments")
@@ -37,4 +40,18 @@ public class CommentController {
                new ResponseEntity<>(HttpStatus.NOT_FOUND) : 
                new ResponseEntity<>(comments, HttpStatus.OK);
     }
+    
+    
+    @GetMapping("/metadata/{bookId}")
+    public ResponseEntity<Map<String, Object>> getCommentMetadata(@PathVariable Long bookId) {
+        long count = commentRepository.countCommentsByBookId(bookId);
+        LocalDateTime lastEngagement = commentRepository.findLastCommentTimestampByBookId(bookId);
+
+        Map<String, Object> metadata = new HashMap<>();
+        metadata.put("count", count);
+        metadata.put("lastEngagement", lastEngagement);
+
+        return ResponseEntity.ok(metadata);
+    }
+
 }

@@ -23,7 +23,7 @@ public class ReadConnectApplication {
 
 	@Bean
 	ApplicationRunner init(UserRepository userRepository, BookRepository bookRepository,
-			MessageRepository messageRepository, PasswordEncoder passwordEncoder) {
+			MessageRepository messageRepository, CommentRepository commentRepository, PasswordEncoder passwordEncoder) {
 		return args -> {
 
 			String[] category = { "General", "Psychology", "Science", "Historical", "Literature" };
@@ -129,6 +129,7 @@ public class ReadConnectApplication {
 	        );
 	        books.forEach(bookRepository::save);
 
+	        
 	        // Real Message Data for Each User
 	        List<Message> messages = List.of(
 	                new Message(users.get(0), users.get(1), "Hey, have you read 'Thinking, Fast and Slow'?", LocalDateTime.now().minusDays(1)),
@@ -139,6 +140,19 @@ public class ReadConnectApplication {
 	        );
 	        messages.forEach(message -> messageRepository.save(message));
 			
+	        
+	        
+	        // Add comments for books
+	        for (Book book : books) {
+	            // Add 3-5 comments for each book
+	            IntStream.range(0, random.nextInt(3) + 3).forEach(i -> {
+	                User commenter = users.get(random.nextInt(users.size())); // Random user
+	                String content = "This is a great book about " + book.getCategory().toLowerCase() + ".";
+	                LocalDateTime timestamp = LocalDateTime.now().minusDays(random.nextInt(30)); // Random timestamp
+	                Comment comment = new Comment(commenter, book, content, timestamp);
+	                commentRepository.save(comment);
+	            });
+	        }
 	        
 		};
 	}
