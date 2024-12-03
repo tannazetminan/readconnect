@@ -14,12 +14,13 @@
       <div class="setting">
         <div class="edit-preferences" @click="editPreferences">
           <h2>Profile
-          <img src="images/editar.png" class="edit" @click="editPreferences" /></h2>
+            <img src="images/editar.png" class="edit" @click="editPreferences" />
+          </h2>
         </div>
-        <div v-if="showForm" class="container-profile">
+        <!-- <div v-if="showForm" class="container-profile">
           <form @submit.prevent="savePreferences">
             <input type="text" id="username" v-model="profile_settings.username" placeholder="Username" style="margin: 0;">
-            <!-- <input type="text" id="email" v-model="profile_settings.email" placeholder="Email"> -->
+             <input type="text" id="email" v-model="profile_settings.email" placeholder="Email">
             <input type="text" id="phone" v-model="profile_settings.phone" placeholder="Phone" style="margin: 0;">
             <input type="text" id="age" v-model="profile_settings.age" placeholder="Age" style="margin: 0;">
             <input type="text" id="country" v-model="profile_settings.country" placeholder="Country" style="margin: 0;">
@@ -28,7 +29,58 @@
             <button type="submit" @click="savePreferences">Save</button>
             <button type="submit" @click="hideForm">Cancel</button>
           </form>
+        </div> -->
+        <div v-if="showForm" class="container-profile">
+          <form @submit.prevent="savePreferences">
+            <!-- Username -->
+            <label for="username">Username:</label>
+            <input type="text" id="username" v-model="profile_settings.username"
+              :placeholder="user.username || 'Enter username'" />
+
+            <!-- Phone -->
+            <label for="phone">Phone:</label>
+            <input type="text" id="phone" v-model="profile_settings.phone"
+              :placeholder="user.phone || 'Enter phone number'" />
+
+            <!-- Age -->
+            <label for="age">Age:</label>
+            <input type="text" id="age" v-model="profile_settings.age" :placeholder="user.age || 'Enter age'" />
+
+            <!-- Country -->
+            <label for="country">Country:</label>
+            <input type="text" id="country" v-model="profile_settings.country"
+              :placeholder="user.country || 'Enter country'" />
+
+            <!-- Interests -->
+            <label for="interests">Interests:</label>
+            <select id="interests" v-model="profile_settings.intrests">
+              <option value="" disabled>Select Category</option>
+              <option value="Psychology">Psychology</option>
+              <option value="General">General</option>
+              <option value="Historical">Historical</option>
+              <option value="Science">Science</option>
+              <option value="Literature">Literature</option>
+            </select>
+
+            <!-- Mode -->
+            <label for="mode">Profile Mode:</label>
+            <div>
+              <button style="width: 40%; float:left; margin-left: 25px;" type="button" :class="{ 'selected': profile_settings.mode === false }"
+                @click="profile_settings.mode = false">
+                Visible
+              </button>
+              <button style="width: 40%; float: right; margin-right: 25px;" type="button" :class="{ 'selected': profile_settings.mode === true }"
+                @click="profile_settings.mode = true">
+                Hidden
+              </button>
+            </div>
+
+            <!-- Save and Cancel -->
+            <button type="submit" @click="savePreferences">Save</button>
+            <button type="submit" @click="hideForm">Cancel</button>
+          </form>
         </div>
+
         <div v-else>
           <p><strong>Username:</strong> {{ user.username }}</p>
           <!-- <p><strong>Email:</strong> {{ user.email }}</p> -->
@@ -66,7 +118,7 @@
             <input type="textArea" v-model="newBook.description" required placeholder="Description" />
             <input type="text" v-model="newBook.isbn" required placeholder="ISBN" />
             <input type="text" v-model="newBook.location" placeholder="Location" />
-            <input type="file" @change="onFileChange" accept="image/*" id="imgInput" >
+            <input type="file" @change="onFileChange" accept="image/*" id="imgInput">
             <button type="submit">Send</button>
             <p v-if="errorMessage" class="error-message">{{ errorMessage }}</p>
           </div>
@@ -84,11 +136,11 @@
           <p class="desc-book">ISBN: {{ book.isbn }}</p>
           <p class="desc-book">Location: {{ book.location }}</p>
           <div class="rating-stars">
-              <span v-for="star in 5" :key="star" 
-                    :class="['star', star <= (  book.totalRatingScore /   book.ratingCount  ) ? 'filled' : '']" >
-                  ★
-              </span>
-          </div>     
+            <span v-for="star in 5" :key="star"
+              :class="['star', star <= (book.totalRatingScore / book.ratingCount) ? 'filled' : '']">
+              ★
+            </span>
+          </div>
         </div>
         <div style="display: block; float: right;">
           <img v-if="book.image" :src="getImageSrc(book.image)" alt="Book Image" class="bookImg" />
@@ -267,8 +319,8 @@ export default {
       this.newBook.image = file;
     },
     formatTimestamp(timestamp) {
-        const date = new Date(timestamp);
-        return date.toLocaleString(); 
+      const date = new Date(timestamp);
+      return date.toLocaleString();
     },
 
     //showing books written by this user
@@ -317,7 +369,6 @@ export default {
 </script>
 
 <style scoped>
-
 .container-cards {
   width: 90%;
   max-width: 1400px;
@@ -349,7 +400,7 @@ export default {
   text-align: center;
 }
 
-.container-profile{
+.container-profile {
   padding: 0;
 }
 
@@ -425,6 +476,12 @@ button:hover {
   background-color: #cf6b0b;
 }
 
+button.selected {
+  background-color: #e27713;
+  color: white;
+  font-weight: bold;
+}
+
 /* Book Section */
 .card-books {
   flex: 1;
@@ -481,25 +538,30 @@ button:hover {
 
 
 .rating-stars {
-    display: flex;
-    gap: 8px;
-    margin-top: 10px;
+  display: flex;
+  gap: 8px;
+  margin-top: 10px;
 }
 
 .star {
-    font-size: 1.75rem;
-    color: #ddd;
-    transition: color 0.3s;
+  font-size: 1.75rem;
+  color: #ddd;
+  transition: color 0.3s;
 }
 
 .star.filled {
-    color: #ff9800;
+  color: #ff9800;
 }
 
-#imgInput{
+#imgInput {
   border: 0;
   margin: 0px;
   height: auto;
 }
 
+.selected {
+  background-color: #8f8780;
+  color: white;
+  border: 1px solid #cf6b0b;
+}
 </style>
