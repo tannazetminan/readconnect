@@ -65,12 +65,12 @@
             <!-- Mode -->
             <label for="mode">Profile Mode:</label>
             <div>
-              <button style="width: 40%; float:left; margin-left: 25px;" type="button" :class="{ 'selected': profile_settings.mode === false }"
-                @click="profile_settings.mode = false">
+              <button style="width: 40%; float:left; margin-left: 25px;" type="button"
+                :class="{ 'selected': profile_settings.mode === false }" @click="setMode(false)">
                 Visible
               </button>
-              <button style="width: 40%; float: right; margin-right: 25px;" type="button" :class="{ 'selected': profile_settings.mode === true }"
-                @click="profile_settings.mode = true">
+              <button style="width: 40%; float: right; margin-right: 25px;" type="button"
+                :class="{ 'selected': profile_settings.mode === true }" @click="setMode(true)">
                 Hidden
               </button>
             </div>
@@ -88,7 +88,8 @@
           <p><strong>Age:</strong> {{ user.age }}</p>
           <p><strong>Country:</strong> {{ user.country }}</p>
           <p><strong>Interest:</strong> {{ user.intrests }}</p>
-          <p><strong>Profile Mode:</strong> <span v-if="user.mode == false">Visible</span><span v-else>Hidden</span></p>
+          <p><strong>Profile Mode:</strong> <span v-if="user.mode === false">Visible</span><span v-else>Hidden</span>
+          </p>
         </div>
       </div>
 
@@ -191,7 +192,7 @@ export default {
         email: "",
         age: "",
         intrests: "",
-        mode: false,
+        mode: "",
       },
       showForm: false,
       newBook: {
@@ -218,7 +219,7 @@ export default {
       this.fullName = localStorage.getItem('fullName')
       console.log(fullName);
 
-      console.log("SID:" + id)
+      //console.log("SID:" + id)
       FetchDataServices.getUserById(id)
         .then(response => {
           this.user = response.data;
@@ -244,7 +245,7 @@ export default {
         phone: this.profile_settings.phone || this.user.phone,
         age: this.profile_settings.age || this.user.age,
         intrests: this.profile_settings.intrests || this.user.intrests,
-        mode: this.profile_settings.mode || this.user.mode,
+        mode: this.profile_settings.mode,
       };
 
       FetchDataServices.updateUser(this.user.id, updatedProfile)
@@ -321,6 +322,10 @@ export default {
     formatTimestamp(timestamp) {
       const date = new Date(timestamp);
       return date.toLocaleString();
+    },
+    setMode(mode) {
+      this.profile_settings.mode = mode;
+      console.log(this.profile_settings.mode);
     },
 
     //showing books written by this user

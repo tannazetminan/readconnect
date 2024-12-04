@@ -325,5 +325,7 @@ button {
   width: 100%;
   text-align: center;
   padding: 50px;
+  margin-top: 200px;
+  font-size: 2rem;
 }
 </style>
